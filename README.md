@@ -12,4 +12,4 @@ Draw image with GA
 - winxp (building) https://youtu.be/1Hlc6eYiScI
 - winxp (drawing) https://youtu.be/XEFYhfZpA5k
 
-<img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/xp.jpg"> -> <img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/result(16x)_xp.png">
+<img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/xp.jpg" width=256 height=256> -> <img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/result(16x)_xp.png" width=256 height=256>
