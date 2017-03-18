@@ -1,6 +1,6 @@
 // AIR-DRAWER version 1.0.0 build 1
 // Canvas version 1.0.0 build 1
-// DNA version 1.0.0 build 1
+// DNA version 1.0.1 build 2
 
 class DNA {
 
@@ -34,73 +34,42 @@ class DNA {
     genes[7] = 80;
   }
 
+  void mutate(int xy, int rgb) {
+    genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 1, target.width);
+    genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 1, target.height);
+
+    genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 1, target.width);
+    genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 1, target.height);
+
+    genes[4]=constrain(genes[4] + 255 * randomGaussian() / rgb, 0, 255);
+    genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
+    genes[6]=constrain(genes[6] + 255 * randomGaussian() / rgb, 0, 255);
+  }
+
+  // presets
   void mutate(String preset) {
     if (preset.equals("fast")) {
-
-      genes[0]=constrain(genes[0] + target.width * randomGaussian() / 20, 1, target.width);
-      genes[1]=constrain(genes[1] + target.height * randomGaussian() / 20, 1, target.height);
-
-      genes[2]=constrain(genes[2] + target.width * randomGaussian() / 20, 1, target.width);
-      genes[3]=constrain(genes[3] + target.height * randomGaussian() / 20, 1, target.height);
-
-      genes[4]=constrain(genes[4] + 255 * randomGaussian() / 15, 0, 255);
-      genes[5]=constrain(genes[5] + 255 * randomGaussian() / 15, 0, 255);
-      genes[6]=constrain(genes[6] + 255 * randomGaussian() / 15, 0, 255);
-      
+      mutate(20, 15);
     } else if (preset.equals("medium")) {
-
-      genes[0]=constrain(genes[0] + target.width * randomGaussian() / 40, 1, target.width);
-      genes[1]=constrain(genes[1] + target.height * randomGaussian() / 40, 1, target.height);
-
-      genes[2]=constrain(genes[2] + target.width * randomGaussian() / 40, 1, target.width);
-      genes[3]=constrain(genes[3] + target.height * randomGaussian() / 40, 1, target.height);
-
-      genes[4]=constrain(genes[4] + 255 * randomGaussian() / 30, 0, 255);
-      genes[5]=constrain(genes[5] + 255 * randomGaussian() / 30, 0, 255);
-      genes[6]=constrain(genes[6] + 255 * randomGaussian() / 30, 0, 255);
-      
+      mutate(40, 30);
     } else if (preset.equals("slow")) {
-
-      genes[0]=constrain(genes[0] + target.width * randomGaussian() / 80, 1, target.width);
-      genes[1]=constrain(genes[1] + target.height * randomGaussian() / 80, 1, target.height);
-
-      genes[2]=constrain(genes[2] + target.width * randomGaussian() / 80, 1, target.width);
-      genes[3]=constrain(genes[3] + target.height * randomGaussian() / 80, 1, target.height);
-
-      genes[4]=constrain(genes[4] + 255 * randomGaussian() / 60, 0, 255);
-      genes[5]=constrain(genes[5] + 255 * randomGaussian() / 60, 0, 255);
-      genes[6]=constrain(genes[6] + 255 * randomGaussian() / 60, 0, 255);
-      
-    } else mutate(); // default option
+      mutate(80, 60);
+    } else mutate();
   }
 
+  // default option
   void mutate() {
-
-    genes[0]=constrain(genes[0] + target.width * randomGaussian() / 20, 1, target.width);
-    genes[1]=constrain(genes[1] + target.height * randomGaussian() / 20, 1, target.height);
-
-    genes[2]=constrain(genes[2] + target.width * randomGaussian() / 20, 1, target.width);
-    genes[3]=constrain(genes[3] + target.height * randomGaussian() / 20, 1, target.height);
-
-    genes[4]=constrain(genes[4] + 255 * randomGaussian() / 15, 0, 255);
-    genes[5]=constrain(genes[5] + 255 * randomGaussian() / 15, 0, 255);
-    genes[6]=constrain(genes[6] + 255 * randomGaussian() / 15, 0, 255);
-    
-  }
-
-  void draw(PGraphics cacheBoard) {
-    
-    //draw polygon on screen based on parameters
-    draw(cacheBoard, 1);
-    
+    mutate(20, 15);
   }
 
   void draw(PGraphics cacheBoard, float ratio) {
-    
     cacheBoard.stroke(genes[4], genes[5], genes[6], genes[7]);
     cacheBoard.strokeWeight(2 * ratio);
     cacheBoard.line(genes[0] * ratio, genes[1] * ratio, genes[2] * ratio, genes[3] * ratio);
-    
+  }
+
+  void draw(PGraphics cacheBoard) {
+    draw(cacheBoard, 1);
   }
   
 }
