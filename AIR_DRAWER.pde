@@ -1,4 +1,6 @@
-// AIR-DRAWER version 1.0.0 build 1
+// AIR-DRAWER version 1.1.0 build 2
+// Canvas version 1.0.0 build 1
+// DNA version 1.0.0 build 1
 
 //data of times and fitness
 Table table = new Table();
@@ -20,7 +22,7 @@ int fitness, lastFitness, originFitness;
 int gen;
 
 void setup() {
-  size(256, 576);
+  size(512, 288);
 
   noStroke();
   smooth();
@@ -28,8 +30,9 @@ void setup() {
   f = createFont("Courier", 32, true);
   target = loadImage("lenna256.png");
 
-  surface.setSize(target.width, target.height * 2 + 70);
-
+  surface.setSize(target.width *2, target.height + 32);
+  surface.setTitle("AIR-DRAWER v1.1.0");
+  
   table.addColumn("Gen");
   table.addColumn("Time");
   table.addColumn("Fitness");
@@ -69,7 +72,6 @@ void setup() {
 
   dnaSize = 8;
 
-  image(target, 0, 0);
   target.loadPixels();
 
   // Create a populationation with a target , mutation rate, and populationation max
@@ -82,7 +84,7 @@ void setup() {
 }
 
 void draw() {
-  saveFrame("frames/#####.jpg");
+  if (frameCount == 1) image(target, 0, 0);
 
   if (ifContinue) {
     if (fitness < 230000) exit();
@@ -93,7 +95,7 @@ void draw() {
       if (fitness > 2500000) preset = "slow";
       else if (fitness > 2000000) preset = "slow";
       else if (fitness > 1700000) preset = "slow";
-      
+
       population.population[i].mutate(preset);
       population.display(i);
 
@@ -120,8 +122,7 @@ void draw() {
 
     gen++;
 
-    image(target, 0, 0);
-    image(canvas, 0, target.height);
+    image(canvas, target.width, 0);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
     newRow.setInt("Time", millis());
@@ -132,18 +133,29 @@ void draw() {
   }
 
   displayInfo();
+  saveFrame("frames/#####.jpg");
 }
 
 void displayInfo() {
 
   //display generation count
-  textSize(14);
+  textSize(20);
+  textAlign(LEFT, CENTER);
+
   fill(0);
-  rect(0, 5 + 2*target.height, target.width, 60);
-  fill(255);
-  text("Gen: " + gen, 6, 20 + 2*target.height);
-  text("Time: " + millis()/1000 + "." + (millis()%1000)/10, 6, 40 + 2*target.height);
-  text("Fitness: " + fitness, 6, 60 + 2*target.height);
+  rect(0, target.height, target.width * 2, 32);
+  fill(0, 255, 255);
+  text("Gen : " + gen, 10, target.height + 14);
+  String hour = "00";
+  String minute = "00";
+  String second = "00";
+
+  hour = "00".substring(str(millis()/3600000).length()) + str(millis()/3600000);
+  minute = "00".substring(str((millis()/60000)%60).length()) + str((millis()/60000)%60);
+  second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
+
+  text("Time : " + hour + ":" + minute + ":" + second, 130, target.height + 14);
+  text("Fitness : " + fitness, 330, target.height + 14);
 }
 
 void keyPressed() {
