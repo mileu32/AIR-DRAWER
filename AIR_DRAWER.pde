@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.1.0 build 2
-// Canvas version 1.0.0 build 1
-// DNA version 1.0.0 build 1
+// AIR-DRAWER version 1.1.0 build 3
+// Population version 1.1.0 build 3
+// DNA version 1.0.1 build 4
 
 //data of times and fitness
 Table table = new Table();
@@ -17,9 +17,12 @@ PGraphics scanvas; //Ga drawing render
 int rootpopmax;
 int popmax;
 int dnaSize;
-Canvas population;
+Population population;
 int fitness, lastFitness, originFitness;
 int gen;
+
+boolean turboMode = false;
+String preset = "medium";
 
 void setup() {
   size(512, 288);
@@ -27,12 +30,12 @@ void setup() {
   noStroke();
   smooth();
 
-  f = createFont("Courier", 32, true);
-  target = loadImage("lenna256.png");
+  f = createFont("Courier", 20, true);
+  target = loadImage("Illya256crop.jpg");
 
   surface.setSize(target.width *2, target.height + 32);
   surface.setTitle("AIR-DRAWER v1.1.0");
-  
+
   table.addColumn("Gen");
   table.addColumn("Time");
   table.addColumn("Fitness");
@@ -67,7 +70,7 @@ void setup() {
   c_canvas2.endDraw();
 
   //rootpopmax = (target.width + target.height) / 10;
-  rootpopmax = 64;
+  rootpopmax = 40;
   popmax = rootpopmax * rootpopmax;
 
   dnaSize = 8;
@@ -75,7 +78,7 @@ void setup() {
   target.loadPixels();
 
   // Create a populationation with a target , mutation rate, and populationation max
-  population = new Canvas(popmax, dnaSize);
+  population = new Population(popmax, dnaSize);
 
   lastFitness = population.calFitness();
 
@@ -90,11 +93,6 @@ void draw() {
     if (fitness < 230000) exit();
 
     for (int i = 0; i < population.population.length; i++) {
-      String preset = "medium";
-
-      if (fitness > 2500000) preset = "slow";
-      else if (fitness > 2000000) preset = "slow";
-      else if (fitness > 1700000) preset = "slow";
 
       population.population[i].mutate(preset);
       population.display(i);
@@ -102,13 +100,17 @@ void draw() {
       fitness = population.calFitness();
 
       //if before draw is better, rollback
-      if (fitness < lastFitness || (fitness > 2000000 && random(40) < 4) || (fitness > 1500000 && random(50) < 3) || (fitness > 1000000 && random(500) < 2) ) {
+      if (fitness < lastFitness) {
         population.copyFromOrigToBack();
         lastFitness = fitness;
       } else {
         population.copyFromBackToOrig();
         fitness = lastFitness;
       }
+
+      c_canvas1.beginDraw();
+      population.population[i].draw(c_canvas1);
+      c_canvas1.endDraw();
     }
 
     if (fitness < originFitness) {
@@ -134,6 +136,34 @@ void draw() {
 
   displayInfo();
   saveFrame("frames/#####.jpg");
+}
+
+color selectBackgroundColor(PImage image) {
+  int rsum = 0, gsum = 0, bsum = 0;
+  int totalpixel = image.width * image.height;
+  color averageColor;
+
+  for (int x = 0; x < image.width; x++) {
+    for (int y = 0; y < image.height; y++) {
+      int loc = x + y*target.width;
+      //int comploc = x + (y+(target.height))*target.width;
+      color sourcepix = image.pixels[loc];
+
+      //find the error in color (0 to 255, 0 is no error)
+      rsum += red(sourcepix);
+      gsum += green(sourcepix);
+      bsum += blue(sourcepix);
+    }
+  }
+
+  rsum = rsum / totalpixel;
+  gsum = gsum / totalpixel;
+  bsum = bsum / totalpixel;
+
+  averageColor = color(rsum, gsum, bsum);
+  println(rsum + " : " + gsum + " : " + bsum);
+
+  return averageColor;
 }
 
 void displayInfo() {
@@ -162,9 +192,38 @@ void keyPressed() {
   if ( key == 'q' || key == 'Q' || key == 'ㅂ') {
     println("starting ending sequence");
     ifContinue = false;
+  } else if ( key == '1') {
+    preset = "UltraFast";
+    println("UltraFast");
+  } else if ( key == '2') {
+    preset = "SuperFast";
+    println("SuperFast");
+  } else if ( key == '3') {
+    preset = "VeryFast";
+    println("VeryFast");
+  } else if ( key == '4') {
+    preset = "Faster";
+    println("Faster");
+  } else if ( key == '5') {
+    preset = "Fast";
+    println("Fast");
+  } else if ( key == '6') {
+    preset = "Medium";
+    println("Medium");
+  } else if ( key == '7') {
+    preset = "Slow";
+    println("Slow");
+  } else if ( key == '8') {
+    preset = "Slower";
+    println("Slower");
+  } else if (key == '9' ) {
+    preset = "VerySlow";
+    println("VerySlow");
+  } else if (key == '0' ) {
+    preset = "Placebo";
+    println("Placebo");
   }
 }
-
 
 void exit() {
   saveTable(table, "data/data.csv");
@@ -172,9 +231,8 @@ void exit() {
   canvas.save("data/result.png");
   println("saving dna");
 
-
   scanvas.beginDraw();
-  scanvas.background(255);
+  scanvas.background(population.backgroundColor);
   scanvas.endDraw();
 
   for (int i = 0; i < population.population.length; i++) {
