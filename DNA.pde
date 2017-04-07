@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.1.0 build 3
-// Population version 1.0.0 build 1
-// DNA version 1.0.1 build 4
+// AIR-DRAWER version 1.1.0 build 4
+// Population version 1.1.0 build 4
+// DNA version 1.1.0 build 5
 
 class DNA {
 
@@ -31,19 +31,31 @@ class DNA {
     genes[5] = random(1, 255);
     genes[6] = random(1, 255);
 
-    genes[7] = 48;
+    genes[7] = 64;
   }
 
   void mutate(int xy, int rgb) {
-    genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 1, target.width);
-    genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 1, target.height);
+    if (xy > 0 && rgb >0) {
+      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 1, target.width);
+      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 1, target.height);
 
-    genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 1, target.width);
-    genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 1, target.height);
+      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 1, target.width);
+      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 1, target.height);
 
-    genes[4]=constrain(genes[4] + 255 * randomGaussian() / rgb, 0, 255);
-    genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
-    genes[6]=constrain(genes[6] + 255 * randomGaussian() / rgb, 0, 255);
+      genes[4]=constrain(genes[4] + 255 * randomGaussian() / rgb, 0, 255);
+      genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
+      genes[6]=constrain(genes[6] + 255 * randomGaussian() / rgb, 0, 255);
+    } else if (xy < 0 && rgb >0) {
+      genes[4]=constrain(genes[4] + 255 * randomGaussian() / rgb, 0, 255);
+      genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
+      genes[6]=constrain(genes[6] + 255 * randomGaussian() / rgb, 0, 255);
+    } else if (xy > 0 && rgb <0) {
+      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 1, target.width);
+      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 1, target.height);
+
+      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 1, target.width);
+      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 1, target.height);
+    }
   }
 
   // presets
@@ -69,6 +81,8 @@ class DNA {
       mutate(100, 55);
     } else if (preset.equals("Placebo")) {
       mutate(110, 60);
+    } else if (preset.equals("Color")) {
+      mutate(-1, 40);
     } else mutate();
   }
 
