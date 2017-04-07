@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.1.0 build 3
-// Population version 1.1.0 build 3
-// DNA version 1.0.1 build 4
+// AIR-DRAWER version 1.1.0 build 4
+// Population version 1.1.0 build 4
+// DNA version 1.1.0 build 5
 
 //data of times and fitness
 Table table = new Table();
@@ -22,7 +22,7 @@ int fitness, lastFitness, originFitness;
 int gen;
 
 boolean turboMode = false;
-String preset = "medium";
+String preset = "UltraFast";
 
 void setup() {
   size(512, 288);
@@ -39,6 +39,7 @@ void setup() {
   table.addColumn("Gen");
   table.addColumn("Time");
   table.addColumn("Fitness");
+  table.addColumn("Success");
 
   scanvas = createGraphics(target.width * 16, target.height * 16);
 
@@ -87,10 +88,12 @@ void setup() {
 }
 
 void draw() {
+  
+  int success = 0;
+    
   if (frameCount == 1) image(target, 0, 0);
 
   if (ifContinue) {
-    if (fitness < 230000) exit();
 
     for (int i = 0; i < population.population.length; i++) {
 
@@ -103,6 +106,7 @@ void draw() {
       if (fitness < lastFitness) {
         population.copyFromOrigToBack();
         lastFitness = fitness;
+        success++;
       } else {
         population.copyFromBackToOrig();
         fitness = lastFitness;
@@ -113,22 +117,14 @@ void draw() {
       c_canvas1.endDraw();
     }
 
-    if (fitness < originFitness) {
-      population.copyFromOriginToBack();
-      originFitness = fitness;
-    } else {
-      population.copyFromBackToOrigin();
-      fitness = originFitness;
-      gen--;
-    }
-
     gen++;
-
+    println("success " + success);
     image(canvas, target.width, 0);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
     newRow.setInt("Time", millis());
     newRow.setInt("Fitness", fitness);
+    newRow.setInt("Success", success);
   } else {
     exit();
     noLoop();
@@ -185,7 +181,7 @@ void displayInfo() {
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
   text("Time : " + hour + ":" + minute + ":" + second, 130, target.height + 14);
-  text("Fitness : " + fitness, 330, target.height + 14);
+  text("Fitness : " + fitness / 3, 330, target.height + 14);
 }
 
 void keyPressed() {
@@ -222,6 +218,9 @@ void keyPressed() {
   } else if (key == '0' ) {
     preset = "Placebo";
     println("Placebo");
+  } else if (key == 'c' ) {
+    preset = "Color";
+    println("Color");
   }
 }
 
