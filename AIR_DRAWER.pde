@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.1.0 build 4
-// Population version 1.1.0 build 4
+// AIR-DRAWER version 1.2.0 beta build 5
+// Population version 1.2.0 beta build 5
 // DNA version 1.1.0 build 5
 
 //data of times and fitness
@@ -19,6 +19,7 @@ int popmax;
 int dnaSize;
 Population population;
 int fitness, lastFitness, originFitness;
+int[] fitrgb =new int[3];
 int gen;
 
 boolean turboMode = false;
@@ -34,7 +35,7 @@ void setup() {
   target = loadImage("Illya256crop.jpg");
 
   surface.setSize(target.width *2, target.height + 32);
-  surface.setTitle("AIR-DRAWER v1.1.0");
+  surface.setTitle("AIR-DRAWER v1.2.0 beta");
 
   table.addColumn("Gen");
   table.addColumn("Time");
@@ -70,8 +71,7 @@ void setup() {
   c_canvas2.noStroke();
   c_canvas2.endDraw();
 
-  //rootpopmax = (target.width + target.height) / 10;
-  rootpopmax = 40;
+  rootpopmax = 48;
   popmax = rootpopmax * rootpopmax;
 
   dnaSize = 8;
@@ -80,17 +80,17 @@ void setup() {
 
   // Create a populationation with a target , mutation rate, and populationation max
   population = new Population(popmax, dnaSize);
-
-  lastFitness = population.calFitness();
+  fitrgb = population.calFitness();
+  lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
 
   fitness = lastFitness;
   originFitness = fitness;
 }
 
 void draw() {
-  
+
   int success = 0;
-    
+
   if (frameCount == 1) image(target, 0, 0);
 
   if (ifContinue) {
@@ -100,7 +100,8 @@ void draw() {
       population.population[i].mutate(preset);
       population.display(i);
 
-      fitness = population.calFitness();
+      fitrgb = population.calFitness();
+      fitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
 
       //if before draw is better, rollback
       if (fitness < lastFitness) {
@@ -119,6 +120,7 @@ void draw() {
 
     gen++;
     println("success " + success);
+    println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
     image(canvas, target.width, 0);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
@@ -129,7 +131,7 @@ void draw() {
     exit();
     noLoop();
   }
-
+  
   displayInfo();
   saveFrame("frames/#####.jpg");
 }
