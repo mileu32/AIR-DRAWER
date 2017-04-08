@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.1.0 build 4
-// Population version 1.1.0 build 4
+// AIR-DRAWER version 1.2.0 beta build 5
+// Population version 1.2.0 beta build 5
 // DNA version 1.1.0 build 5
 
 // A class to describe a population of virtual organisms
@@ -47,10 +47,10 @@ class Population {
   }
 
   // Fitness function
-  int calFitness() {
+  int[] calFitness() {
 
     float rerr, gerr, berr, error;
-    int fit = 0;
+    int[] fit = new int[3];// r, g, b
 
     for (int x = 0; x < target.width; x++) {
       for (int y = 0; y < target.height; y++) {
@@ -63,8 +63,9 @@ class Population {
         rerr = abs(red(sourcepix)-red(comparepix));
         gerr = abs(green(sourcepix)-green(comparepix));
         berr = abs(blue(sourcepix)-blue(comparepix));
-        error = rerr + gerr + berr;
-        fit += error;
+        fit[0] += rerr;
+        fit[1] += gerr;
+        fit[2] += berr;
       }
     }  
 
