@@ -1,4 +1,4 @@
-// AIR-DRAWER version 1.2.0 beta build 5
+// AIR-DRAWER version 1.2.0 beta build 6
 // Population version 1.2.0 beta build 5
 // DNA version 1.1.0 build 5
 
@@ -24,6 +24,8 @@ int gen;
 
 boolean turboMode = false;
 String preset = "UltraFast";
+
+String projectName = year() + "00".substring(str(month()).length()) + str(month()) + "00".substring(str(day()).length()) + str(day()) + "00".substring(str(hour()).length()) + str(hour()) + "00".substring(str(minute()).length()) + str(minute()) + "_";
 
 void setup() {
   size(512, 288);
@@ -131,9 +133,9 @@ void draw() {
     exit();
     noLoop();
   }
-  
+
   displayInfo();
-  saveFrame("frames/#####.jpg");
+  saveFrame(projectName + "frames/#####.jpg");
 }
 
 color selectBackgroundColor(PImage image) {
@@ -227,9 +229,10 @@ void keyPressed() {
 }
 
 void exit() {
-  saveTable(table, "data/data.csv");
+
+  saveTable(table, "data/" + projectName + "data.csv");
   println("saving canvas..");
-  canvas.save("data/result.png");
+  canvas.save("data/" + projectName + "result.png");
   println("saving dna");
 
   scanvas.beginDraw();
@@ -242,7 +245,7 @@ void exit() {
     scanvas.endDraw();
     String count = "00000".substring(str(i).length()) + str(i);
     println(i + "/" + population.population.length);
-    scanvas.save("draw/"+count+".jpg");
+    scanvas.save(projectName + "draw/"+count+".jpg");
   }
-  scanvas.save("data/result(16x).png");
+  scanvas.save("data/" + projectName + "result(16x).png");
 }
