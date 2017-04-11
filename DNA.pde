@@ -1,6 +1,6 @@
 // AIR-DRAWER version 1.1.0 build 4
 // Population version 1.1.0 build 4
-// DNA version 1.1.0 build 5
+// DNA version 1.1.1 build 6
 
 class DNA {
 
@@ -17,11 +17,11 @@ class DNA {
 
     //do not create too long line at first
     while (len > target.width / 2) {
-      genes[0] = random(0, target.width);
-      genes[1] = random(0, target.height);
+      genes[0] = random(0, target.width - 1);
+      genes[1] = random(0, target.height - 1);
 
-      genes[2] = random(0, target.width);
-      genes[3] = random(0, target.height);
+      genes[2] = random(0, target.width - 1);
+      genes[3] = random(0, target.height - 1);
 
       len = sqrt((genes[0] - genes[2]) * (genes[0] - genes[2]) + (genes[1] - genes[3]) * (genes[1] - genes[3]));
     }
@@ -36,11 +36,11 @@ class DNA {
 
   void mutate(int xy, int rgb) {
     if (xy > 0 && rgb >0) {
-      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 1, target.width);
-      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 1, target.height);
+      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 0, target.width - 1);
+      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 0, target.height - 1);
 
-      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 1, target.width);
-      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 1, target.height);
+      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 0, target.width - 1);
+      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 0, target.height - 1);
 
       genes[4]=constrain(genes[4] + 255 * randomGaussian() / rgb, 0, 255);
       genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
@@ -50,11 +50,11 @@ class DNA {
       genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
       genes[6]=constrain(genes[6] + 255 * randomGaussian() / rgb, 0, 255);
     } else if (xy > 0 && rgb <0) {
-      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 1, target.width);
-      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 1, target.height);
+      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 0, target.width - 1);
+      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 0, target.height - 1);
 
-      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 1, target.width);
-      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 1, target.height);
+      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 0, target.width - 1);
+      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 0, target.height - 1);
     }
   }
 
