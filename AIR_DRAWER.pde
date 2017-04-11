@@ -1,4 +1,4 @@
-// AIR-DRAWER version 1.2.0 beta build 6
+// AIR-DRAWER version 1.2.0 beta build 7
 // Population version 1.2.0 beta build 5
 // DNA version 1.1.0 build 5
 
@@ -13,7 +13,7 @@ PImage target;
 
 PGraphics canvas; // GA drawing
 PGraphics c_canvas1, c_canvas2; //Ga drawing cache
-PGraphics scanvas; //Ga drawing render
+
 int rootpopmax;
 int popmax;
 int dnaSize;
@@ -44,15 +44,6 @@ void setup() {
   table.addColumn("Fitness");
   table.addColumn("Success");
 
-  scanvas = createGraphics(target.width * 16, target.height * 16);
-
-  scanvas.smooth();
-  scanvas.beginDraw();
-
-  scanvas.noStroke();
-  scanvas.background(255);
-  scanvas.endDraw();
-
   canvas = createGraphics(target.width, target.height);
   canvas.beginDraw();
   canvas.smooth();
@@ -67,11 +58,6 @@ void setup() {
   c_canvas1.background(255);
   c_canvas1.endDraw();
 
-  c_canvas2 = createGraphics(target.width, target.height);
-  c_canvas2.beginDraw();
-  c_canvas2.smooth();
-  c_canvas2.noStroke();
-  c_canvas2.endDraw();
 
   rootpopmax = 48;
   popmax = rootpopmax * rootpopmax;
@@ -235,7 +221,12 @@ void exit() {
   canvas.save("data/" + projectName + "result.png");
   println("saving dna");
 
+  PGraphics scanvas; //Ga drawing render
+
+  scanvas = createGraphics(target.width * 16, target.height * 16);
+  scanvas.smooth();
   scanvas.beginDraw();
+  scanvas.noStroke();
   scanvas.background(population.backgroundColor);
   scanvas.endDraw();
 
@@ -247,5 +238,6 @@ void exit() {
     println(i + "/" + population.population.length);
     scanvas.save(projectName + "draw/"+count+".jpg");
   }
+  
   scanvas.save("data/" + projectName + "result(16x).png");
 }
