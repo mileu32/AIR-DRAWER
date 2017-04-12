@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 beta build 7
+// AIR-DRAWER version 1.2.0 beta build 8
 // Population version 1.2.0 beta build 5
-// DNA version 1.1.0 build 5
+// DNA version 1.2.0 beta build 7
 
 //data of times and fitness
 Table table = new Table();
@@ -14,13 +14,13 @@ PImage target;
 PGraphics canvas; // GA drawing
 PGraphics c_canvas1, c_canvas2; //Ga drawing cache
 
-int rootpopmax;
 int popmax;
 int dnaSize;
 Population population;
 int fitness, lastFitness, originFitness;
 int[] fitrgb =new int[3];
 int gen;
+int success;
 
 boolean turboMode = false;
 String preset = "UltraFast";
@@ -58,10 +58,7 @@ void setup() {
   c_canvas1.background(255);
   c_canvas1.endDraw();
 
-
-  rootpopmax = 48;
-  popmax = rootpopmax * rootpopmax;
-
+  popmax = 2000;
   dnaSize = 8;
 
   target.loadPixels();
@@ -77,7 +74,7 @@ void setup() {
 
 void draw() {
 
-  int success = 0;
+  success = 0;
 
   if (frameCount == 1) image(target, 0, 0);
 
@@ -107,8 +104,7 @@ void draw() {
     }
 
     gen++;
-    println("success " + success);
-    println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
+
     image(canvas, target.width, 0);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
@@ -153,7 +149,10 @@ color selectBackgroundColor(PImage image) {
 }
 
 void displayInfo() {
-
+  //display on console
+  println("success " + success);
+  println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
+  
   //display generation count
   textSize(20);
   textAlign(LEFT, CENTER);
@@ -208,6 +207,36 @@ void keyPressed() {
   } else if (key == '0' ) {
     preset = "Placebo";
     println("Placebo");
+  } else if ( key == '!') {
+    preset = "UltraFast(noRGB)";
+    println("UltraFast(noRGB)");
+  } else if ( key == '@') {
+    preset = "SuperFast(noRGB)";
+    println("SuperFast(noRGB)");
+  } else if ( key == '#') {
+    preset = "VeryFast(noRGB)";
+    println("VeryFast(noRGB)");
+  } else if ( key == '$') {
+    preset = "Faster(noRGB)";
+    println("Faster(noRGB)");
+  } else if ( key == '%') {
+    preset = "Fast(noRGB)";
+    println("Fast(noRGB)");
+  } else if ( key == '^') {
+    preset = "Medium(noRGB)";
+    println("Medium(noRGB)");
+  } else if ( key == '&') {
+    preset = "Slow(noRGB)";
+    println("Slow(noRGB)");
+  } else if ( key == '*') {
+    preset = "Slower(noRGB)";
+    println("Slower(noRGB)");
+  } else if (key == '(' ) {
+    preset = "VerySlow(noRGB)";
+    println("VerySlow(noRGB)");
+  } else if (key == ')' ) {
+    preset = "Placebo(noRGB)";
+    println("Placebo(noRGB)");
   } else if (key == 'c' ) {
     preset = "Color";
     println("Color");
