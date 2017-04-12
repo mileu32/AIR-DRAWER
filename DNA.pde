@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.1.0 build 4
+// AIR-DRAWER version 1.2.0 beta build 8
 // Population version 1.1.0 build 4
-// DNA version 1.1.1 build 6
+// DNA version 1.2.0 beta build 7
 
 class DNA {
 
@@ -81,6 +81,26 @@ class DNA {
       mutate(100, 55);
     } else if (preset.equals("Placebo")) {
       mutate(110, 60);
+    } else if (preset.equals("UltraFast(noRGB)")) {
+      mutate(20, -1);
+    } else if (preset.equals("SuperFast(noRGB)")) {
+      mutate(30, -1);
+    } else if (preset.equals("VeryFast(noRGB)")) {
+      mutate(40, -1);
+    } else if (preset.equals("Faster(noRGB)")) {
+      mutate(50, -1);
+    } else if (preset.equals("Fast(noRGB)")) {
+      mutate(60, -1);
+    } else if (preset.equals("Medium(noRGB)")) {
+      mutate(70, -1);
+    } else if (preset.equals("Slow(noRGB)")) {
+      mutate(80, -1);
+    } else if (preset.equals("Slower(noRGB)")) {
+      mutate(90, -1);
+    } else if (preset.equals("VerySlow(noRGB)")) {
+      mutate(100, -1);
+    } else if (preset.equals("Placebo(noRGB)")) {
+      mutate(110, -1);
     } else if (preset.equals("Color")) {
       mutate(-1, 40);
     } else mutate();
