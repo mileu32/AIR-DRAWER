@@ -1,6 +1,6 @@
 // AIR-DRAWER version 1.2.0 beta build 8
 // Population version 1.1.0 build 4
-// DNA version 1.2.0 beta build 7
+// DNA version 1.2.0 beta build 8
 
 class DNA {
 
@@ -12,35 +12,30 @@ class DNA {
   // Constructor (makes a random DNA)
   DNA(int num) {
     this.dnaSize = num;
-    float len = target.width;
     genes = new float[dnaSize];
 
-    //do not create too long line at first
-    while (len > target.width / 2) {
-      genes[0] = random(0, target.width - 1);
-      genes[1] = random(0, target.height - 1);
+    //x, y coordinate ratio
+    genes[0] = random(1);
+    genes[1] = random(1);
 
-      genes[2] = random(0, target.width - 1);
-      genes[3] = random(0, target.height - 1);
-
-      len = sqrt((genes[0] - genes[2]) * (genes[0] - genes[2]) + (genes[1] - genes[3]) * (genes[1] - genes[3]));
-    }
+    genes[2] = random(1);
+    genes[3] = random(1);
 
     //create random fill color and define alpha
-    genes[4] = random(1, 255);
-    genes[5] = random(1, 255);
-    genes[6] = random(1, 255);
+    genes[4] = random(0, 255);
+    genes[5] = random(0, 255);
+    genes[6] = random(0, 255);
 
     genes[7] = 64;
   }
 
   void mutate(int xy, int rgb) {
     if (xy > 0 && rgb >0) {
-      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 0, target.width - 1);
-      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 0, target.height - 1);
+      genes[0]=constrain(genes[0] + randomGaussian() / xy, 0, 1);
+      genes[1]=constrain(genes[1] + randomGaussian() / xy, 0, 1);
 
-      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 0, target.width - 1);
-      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 0, target.height - 1);
+      genes[2]=constrain(genes[2] + randomGaussian() / xy, 0, 1);
+      genes[3]=constrain(genes[3] + randomGaussian() / xy, 0, 1);
 
       genes[4]=constrain(genes[4] + 255 * randomGaussian() / rgb, 0, 255);
       genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
@@ -50,11 +45,11 @@ class DNA {
       genes[5]=constrain(genes[5] + 255 * randomGaussian() / rgb, 0, 255);
       genes[6]=constrain(genes[6] + 255 * randomGaussian() / rgb, 0, 255);
     } else if (xy > 0 && rgb <0) {
-      genes[0]=constrain(genes[0] + target.width * randomGaussian() / xy, 0, target.width - 1);
-      genes[1]=constrain(genes[1] + target.height * randomGaussian() / xy, 0, target.height - 1);
+      genes[0]=constrain(genes[0] + randomGaussian() / xy, 0, 1);
+      genes[1]=constrain(genes[1] + randomGaussian() / xy, 0, 1);
 
-      genes[2]=constrain(genes[2] + target.width * randomGaussian() / xy, 0, target.width - 1);
-      genes[3]=constrain(genes[3] + target.height * randomGaussian() / xy, 0, target.height - 1);
+      genes[2]=constrain(genes[2] + randomGaussian() / xy, 0, 1);
+      genes[3]=constrain(genes[3] + randomGaussian() / xy, 0, 1);
     }
   }
 
@@ -114,10 +109,12 @@ class DNA {
   void draw(PGraphics cacheBoard, float ratio) {
     cacheBoard.stroke(genes[4], genes[5], genes[6], genes[7]);
     cacheBoard.strokeWeight(2 * ratio);
-    cacheBoard.line(genes[0] * ratio, genes[1] * ratio, genes[2] * ratio, genes[3] * ratio);
+    cacheBoard.line(genes[0] * 128 * ratio, genes[1] * 128 * ratio, genes[2] * 128 * ratio, genes[3] * 128 * ratio);
   }
 
   void draw(PGraphics cacheBoard) {
-    draw(cacheBoard, 1);
+    float ratio;
+    ratio = cacheBoard.width / 128;
+    draw(cacheBoard, ratio);
   }
 }
