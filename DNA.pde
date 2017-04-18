@@ -1,25 +1,30 @@
 // AIR-DRAWER version 1.2.0 beta build 8
 // Population version 1.1.0 build 4
-// DNA version 1.2.0 beta build 8
+// DNA version 1.2.0 beta build 9
 
 class DNA {
 
   // The genetic sequence
   float[] genes;//(x1,y1), (x2,y2), r, g, b, a;
   int dnaSize;
-  float fitness;
-
+  
   // Constructor (makes a random DNA)
   DNA(int num) {
     this.dnaSize = num;
+    float len = 1;
     genes = new float[dnaSize];
-
+    
+    //do not create too long line at first
+    while (len * 3 > 1) {
     //x, y coordinate ratio
     genes[0] = random(1);
     genes[1] = random(1);
 
     genes[2] = random(1);
     genes[3] = random(1);
+    
+    len = sqrt((genes[0] - genes[2]) * (genes[0] - genes[2]) + (genes[1] - genes[3]) * (genes[1] - genes[3]));
+    }
 
     //create random fill color and define alpha
     genes[4] = random(0, 255);
@@ -106,15 +111,15 @@ class DNA {
     mutate(20, 15);
   }
 
-  void draw(PGraphics cacheBoard, float ratio) {
-    cacheBoard.stroke(genes[4], genes[5], genes[6], genes[7]);
-    cacheBoard.strokeWeight(2 * ratio);
-    cacheBoard.line(genes[0] * 128 * ratio, genes[1] * 128 * ratio, genes[2] * 128 * ratio, genes[3] * 128 * ratio);
+  void draw(PGraphics board, float ratio) {
+    board.stroke(genes[4], genes[5], genes[6], genes[7]);
+    board.strokeWeight(ratio);
+    board.line(genes[0] * board.width, genes[1] * board.height, genes[2] * board.width, genes[3] * board.height);
   }
 
-  void draw(PGraphics cacheBoard) {
+  void draw(PGraphics board) {
     float ratio;
-    ratio = cacheBoard.width / 128;
-    draw(cacheBoard, ratio);
+    ratio = board.width / 128.0;
+    draw(board, ratio);
   }
 }
