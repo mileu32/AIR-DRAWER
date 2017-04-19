@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 beta build 8
+// AIR-DRAWER version 1.2.0 beta build 9
 // Population version 1.2.0 beta build 5
-// DNA version 1.2.0 beta build 7
+// DNA version 1.2.0 beta build 10
 
 //data of times and fitness
 Table table = new Table();
@@ -17,12 +17,11 @@ PGraphics c_canvas1, c_canvas2; //Ga drawing cache
 int popmax;
 int dnaSize;
 Population population;
-int fitness, lastFitness, originFitness;
-int[] fitrgb =new int[3];
+int fitness, lastFitness;
+int[] fitrgb, lastFitrgb = new int[3];
 int gen;
 int success;
 
-boolean turboMode = false;
 String preset = "UltraFast";
 
 String projectName = year() + "00".substring(str(month()).length()) + str(month()) + "00".substring(str(day()).length()) + str(day()) + "00".substring(str(hour()).length()) + str(hour()) + "00".substring(str(minute()).length()) + str(minute()) + "_";
@@ -67,9 +66,9 @@ void setup() {
   population = new Population(popmax, dnaSize);
   fitrgb = population.calFitness();
   lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
-
+  lastFitrgb = fitrgb;
+  
   fitness = lastFitness;
-  originFitness = fitness;
 }
 
 void draw() {
@@ -92,10 +91,13 @@ void draw() {
       if (fitness < lastFitness) {
         population.copyFromOrigToBack();
         lastFitness = fitness;
+        lastFitrgb = fitrgb;
+        
         success++;
       } else {
         population.copyFromBackToOrig();
         fitness = lastFitness;
+        fitrgb = lastFitrgb;
       }
 
       c_canvas1.beginDraw();
@@ -261,7 +263,7 @@ void exit() {
 
   for (int i = 0; i < population.population.length; i++) {
     scanvas.beginDraw();
-    population.population[i].draw(scanvas, 16);
+    population.population[i].draw(scanvas);
     scanvas.endDraw();
     String count = "00000".substring(str(i).length()) + str(i);
     println(i + "/" + population.population.length);
