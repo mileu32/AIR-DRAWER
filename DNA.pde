@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 beta build 8
-// Population version 1.1.0 build 4
-// DNA version 1.2.0 beta build 9
+// AIR-DRAWER version 1.2.0 beta build 9
+// Population version 1.2.0 beta build 5
+// DNA version 1.2.0 beta build 10
 
 class DNA {
 
@@ -111,15 +111,15 @@ class DNA {
     mutate(20, 15);
   }
 
-  void draw(PGraphics board, float ratio) {
-    board.stroke(genes[4], genes[5], genes[6], genes[7]);
-    board.strokeWeight(ratio);
-    board.line(genes[0] * board.width, genes[1] * board.height, genes[2] * board.width, genes[3] * board.height);
+  void draw(PGraphics layer, float ratio) {
+    layer.stroke(genes[4], genes[5], genes[6], genes[7]);
+    layer.strokeWeight(ratio);
+    layer.line(genes[0] * layer.width, genes[1] * layer.height, genes[2] * layer.width, genes[3] * layer.height);
   }
 
-  void draw(PGraphics board) {
+  void draw(PGraphics layer) {
     float ratio;
-    ratio = board.width / 128.0;
-    draw(board, ratio);
+    ratio = layer.width / 128.0;
+    draw(layer, ratio);
   }
 }
