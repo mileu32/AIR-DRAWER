@@ -1,29 +1,29 @@
 // AIR-DRAWER version 1.2.0 beta build 9
 // Population version 1.2.0 beta build 5
-// DNA version 1.2.0 beta build 10
+// DNA version 1.2.0 beta build 11
 
 class DNA {
 
   // The genetic sequence
   float[] genes;//(x1,y1), (x2,y2), r, g, b, a;
   int dnaSize;
-  
+
   // Constructor (makes a random DNA)
   DNA(int num) {
     this.dnaSize = num;
     float len = 1;
     genes = new float[dnaSize];
-    
+
     //do not create too long line at first
     while (len * 3 > 1) {
-    //x, y coordinate ratio
-    genes[0] = random(1);
-    genes[1] = random(1);
+      //x, y coordinate ratio
+      genes[0] = random(1);
+      genes[1] = random(1);
 
-    genes[2] = random(1);
-    genes[3] = random(1);
-    
-    len = sqrt((genes[0] - genes[2]) * (genes[0] - genes[2]) + (genes[1] - genes[3]) * (genes[1] - genes[3]));
+      genes[2] = random(1);
+      genes[3] = random(1);
+
+      len = sqrt((genes[0] - genes[2]) * (genes[0] - genes[2]) + (genes[1] - genes[3]) * (genes[1] - genes[3]));
     }
 
     //create random fill color and define alpha
@@ -32,6 +32,34 @@ class DNA {
     genes[6] = random(0, 255);
 
     genes[7] = 64;
+  }
+
+  String toString() {
+    return genes[0] + ":" + genes[1] + ":" + genes[2] + ":" + genes[3] + ":" + genes[4] + ":" + genes[5] + ":" + genes[6] + ":" + genes[7];
+  }
+
+  void setRed(float red) {
+    genes[4] = red;
+  }
+  
+  void setGreen(float green) {
+    genes[5] = green;
+  }
+  
+  void setBlue(float blue) {
+    genes[6] = blue;
+  }
+
+  float getRed() {
+    return genes[4];
+  }
+  
+  float getGreen() {
+    return genes[5];
+  }
+  
+  float getBlue() {
+    return genes[6];
   }
 
   void mutate(int xy, int rgb) {
