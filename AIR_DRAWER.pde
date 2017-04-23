@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 beta build 9
-// Population version 1.2.0 beta build 5
-// DNA version 1.2.0 beta build 10
+// AIR-DRAWER version 1.2.0 beta build 10
+// Population version 1.2.0 beta build 6
+// DNA version 1.2.0 beta build 11
 
 //data of times and fitness
 Table table = new Table();
@@ -24,7 +24,7 @@ int success;
 
 String preset = "UltraFast";
 
-String projectName = year() + "00".substring(str(month()).length()) + str(month()) + "00".substring(str(day()).length()) + str(day()) + "00".substring(str(hour()).length()) + str(hour()) + "00".substring(str(minute()).length()) + str(minute()) + "_";
+String projectName = year() + "00".substring(str(month()).length()) + str(month()) + "00".substring(str(day()).length()) + str(day()) + "00".substring(str(hour()).length()) + str(hour()) + "00".substring(str(minute()).length()) + str(minute()) + "_AIR";
 
 void setup() {
   size(512, 288);
@@ -119,7 +119,7 @@ void draw() {
   }
 
   displayInfo();
-  saveFrame(projectName + "frames/#####.jpg");
+  saveFrame("projects/" + projectName + "/frames/#####.jpg");
 }
 
 color selectBackgroundColor(PImage image) {
@@ -247,10 +247,11 @@ void keyPressed() {
 
 void exit() {
 
-  saveTable(table, "data/" + projectName + "data.csv");
+  saveTable(table, "projects/" + projectName + "/data.csv");
   println("saving canvas..");
-  canvas.save("data/" + projectName + "result.png");
+  canvas.save("projects/" + projectName + "/result.png");
   println("saving dna");
+  population.savefile();
 
   PGraphics scanvas; //Ga drawing render
 
@@ -267,8 +268,8 @@ void exit() {
     scanvas.endDraw();
     String count = "00000".substring(str(i).length()) + str(i);
     println(i + "/" + population.population.length);
-    scanvas.save(projectName + "draw/"+count+".jpg");
+    scanvas.save("projects/" + projectName + "/draw/" + count + ".jpg");
   }
   
-  scanvas.save("data/" + projectName + "result(16x).png");
+  scanvas.save("projects/" + projectName + "/result(16x).png");
 }
