@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 beta build 5
-// Population version 1.2.0 beta build 5
-// DNA version 1.1.0 build 5
+// AIR-DRAWER version 1.2.0 beta build 9
+// Population version 1.2.0 beta build 6
+// DNA version 1.2.0 beta build 11
 
 // A class to describe a population of virtual organisms
 // In this case, each organism is just an instance of a DNA object
@@ -22,7 +22,6 @@ class Population {
     for (int i = 0; i < population.length; i++) {
       population[i] =new DNA(dnaSize);
       populationBack[i] = new DNA(dnaSize);
-
     }
 
     backgroundColor = selectBackgroundColor(target);
@@ -46,10 +45,30 @@ class Population {
     canvas.endDraw();
   }
 
+  void mutate() {
+
+    for (int i = 0; i < population.length; i++) {
+      population[i].mutate(preset);
+    }
+  }
+
+  void savefile() {
+    PrintWriter output = createWriter("projects/" + projectName + "/dna.air");
+
+    output.println("MILEUAIR v1.0.0");     //file version
+    output.println("#256");                //Optimized resolution
+
+    for (int i = 0; i < population.length; i++)
+      output.println(populationBack[i].toString());
+
+    output.flush(); // Writes the remaining data to the file
+    output.close();
+  }
+
   // Fitness function
   int[] calFitness() {
 
-    float rerr, gerr, berr, error;
+    float rerr, gerr, berr;
     int[] fit = new int[3];// r, g, b
 
     for (int x = 0; x < target.width; x++) {
@@ -77,10 +96,14 @@ class Population {
   }
 
   void copyFromOrigToBack() {
-    //println("copy From Orig To Back");
     for (int i = 0; i < population.length; i++)
       for (int j = 0; j < dnaSize; j++)
         populationBack[i].genes[j] = population[i].genes[j];
+  }
+
+  void copyFromOrigToBack(int target) {
+    for (int j = 0; j < dnaSize; j++)
+      populationBack[target].genes[j] = population[target].genes[j];
   }
 
   void copyFromBackToOrig() {
@@ -89,4 +112,12 @@ class Population {
         population[i].genes[j] = populationBack[i].genes[j];
   }
 
+  void copyFromBackToOrig(int target) {
+    for (int j = 0; j < dnaSize; j++)
+      population[target].genes[j] = populationBack[target].genes[j];
+  }
+
+  void copyFromBackToOrig(int target, int rgb) { // 0 : red, 1 : green, 2 : blue
+    population[target].genes[rgb] = populationBack[target].genes[rgb];
+  }
 }  
