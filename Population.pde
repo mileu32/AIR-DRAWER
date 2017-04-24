@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 9
-// Population version 1.2.0 beta build 6
+// AIR-DRAWER version 1.2.0 beta build 11
+// Population version 1.2.0 beta build 7
 // DNA version 1.2.0 beta build 11
 
 // A class to describe a population of virtual organisms
@@ -14,6 +14,9 @@ class Population {
 
   color backgroundColor;
 
+  int fitness, lastFitness;
+  int[] fitrgb, lastFitrgb = new int[3];
+
   Population(int popNum, int dnaSize) {
     population = new DNA[popNum];
     populationBack = new DNA[popNum];
@@ -26,6 +29,12 @@ class Population {
 
     backgroundColor = selectBackgroundColor(target);
     backgroundColor = color(249, 239, 227);
+
+    fitrgb = calFitness();
+    lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
+    lastFitrgb = fitrgb;
+
+    fitness = lastFitness;
   }
 
   void display(int newDNA) {
@@ -49,6 +58,27 @@ class Population {
 
     for (int i = 0; i < population.length; i++) {
       population[i].mutate(preset);
+      display(i);
+
+      fitrgb = calFitness();
+      fitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
+
+      //if before draw is better, rollback
+      if (fitness < lastFitness) {
+        copyFromOrigToBack();
+        lastFitness = fitness;
+        lastFitrgb = fitrgb;
+        
+        success++;
+      } else {
+        copyFromBackToOrig();
+        fitness = lastFitness;
+        fitrgb = lastFitrgb;
+      }
+
+      c_canvas1.beginDraw();
+      population[i].draw(c_canvas1);
+      c_canvas1.endDraw();
     }
   }
 
