@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 10
-// Population version 1.2.0 beta build 6
+// AIR-DRAWER version 1.2.0 beta build 11
+// Population version 1.2.0 beta build 7
 // DNA version 1.2.0 beta build 11
 
 //data of times and fitness
@@ -17,8 +17,7 @@ PGraphics c_canvas1, c_canvas2; //Ga drawing cache
 int popmax;
 int dnaSize;
 Population population;
-int fitness, lastFitness;
-int[] fitrgb, lastFitrgb = new int[3];
+
 int gen;
 int success;
 
@@ -64,11 +63,7 @@ void setup() {
 
   // Create a populationation with a target , mutation rate, and populationation max
   population = new Population(popmax, dnaSize);
-  fitrgb = population.calFitness();
-  lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
-  lastFitrgb = fitrgb;
   
-  fitness = lastFitness;
 }
 
 void draw() {
@@ -79,39 +74,14 @@ void draw() {
 
   if (ifContinue) {
 
-    for (int i = 0; i < population.population.length; i++) {
-
-      population.population[i].mutate(preset);
-      population.display(i);
-
-      fitrgb = population.calFitness();
-      fitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
-
-      //if before draw is better, rollback
-      if (fitness < lastFitness) {
-        population.copyFromOrigToBack();
-        lastFitness = fitness;
-        lastFitrgb = fitrgb;
-        
-        success++;
-      } else {
-        population.copyFromBackToOrig();
-        fitness = lastFitness;
-        fitrgb = lastFitrgb;
-      }
-
-      c_canvas1.beginDraw();
-      population.population[i].draw(c_canvas1);
-      c_canvas1.endDraw();
-    }
-
+    population.mutate();
     gen++;
 
     image(canvas, target.width, 0);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
     newRow.setInt("Time", millis());
-    newRow.setInt("Fitness", fitness);
+    //newRow.setInt("Fitness", fitness);
     newRow.setInt("Success", success);
   } else {
     exit();
@@ -153,7 +123,7 @@ color selectBackgroundColor(PImage image) {
 void displayInfo() {
   //display on console
   println("success " + success);
-  println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
+  //println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
   
   //display generation count
   textSize(20);
@@ -172,7 +142,7 @@ void displayInfo() {
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
   text("Time : " + hour + ":" + minute + ":" + second, 130, target.height + 14);
-  text("Fitness : " + fitness / 3, 330, target.height + 14);
+  //text("Fitness : " + fitness / 3, 330, target.height + 14);
 }
 
 void keyPressed() {
