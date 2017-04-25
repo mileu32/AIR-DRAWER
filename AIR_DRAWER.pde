@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 11
-// Population version 1.2.0 beta build 7
+// AIR-DRAWER version 1.2.0 beta build 12
+// Population version 1.2.0 beta build 8
 // DNA version 1.2.0 beta build 11
 
 //data of times and fitness
@@ -11,15 +11,11 @@ int endCount = 0;
 PFont f;
 PImage target;
 
-PGraphics canvas; // GA drawing
-PGraphics c_canvas1, c_canvas2; //Ga drawing cache
-
 int popmax;
 int dnaSize;
 Population population;
 
 int gen;
-int success;
 
 String preset = "UltraFast";
 
@@ -42,21 +38,7 @@ void setup() {
   table.addColumn("Fitness");
   table.addColumn("Success");
 
-  canvas = createGraphics(target.width, target.height);
-  canvas.beginDraw();
-  canvas.smooth();
-  canvas.noStroke();
-  canvas.background(255);
-  canvas.endDraw();
-
-  c_canvas1 = createGraphics(target.width, target.height);
-  c_canvas1.beginDraw();
-  c_canvas1.smooth();
-  c_canvas1.noStroke();
-  c_canvas1.background(255);
-  c_canvas1.endDraw();
-
-  popmax = 2000;
+  popmax = 200;
   dnaSize = 8;
 
   target.loadPixels();
@@ -68,62 +50,38 @@ void setup() {
 
 void draw() {
 
-  success = 0;
-
   if (frameCount == 1) image(target, 0, 0);
 
   if (ifContinue) {
 
     population.mutate();
+    
     gen++;
 
-    image(canvas, target.width, 0);
+    image(population.getCanvas(), target.width, 0);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
     newRow.setInt("Time", millis());
-    //newRow.setInt("Fitness", fitness);
-    newRow.setInt("Success", success);
+    newRow.setInt("Fitness", population.getFitness());
+    newRow.setInt("Success", population.getSuccess());
+    
+    displayInfo();
+    
   } else {
     exit();
     noLoop();
   }
-
-  displayInfo();
+  
   saveFrame("projects/" + projectName + "/frames/#####.jpg");
 }
 
-color selectBackgroundColor(PImage image) {
-  int rsum = 0, gsum = 0, bsum = 0;
-  int totalpixel = image.width * image.height;
-  color averageColor;
 
-  for (int x = 0; x < image.width; x++) {
-    for (int y = 0; y < image.height; y++) {
-      int loc = x + y*target.width;
-      //int comploc = x + (y+(target.height))*target.width;
-      color sourcepix = image.pixels[loc];
-
-      //find the error in color (0 to 255, 0 is no error)
-      rsum += red(sourcepix);
-      gsum += green(sourcepix);
-      bsum += blue(sourcepix);
-    }
-  }
-
-  rsum = rsum / totalpixel;
-  gsum = gsum / totalpixel;
-  bsum = bsum / totalpixel;
-
-  averageColor = color(rsum, gsum, bsum);
-  println(rsum + " : " + gsum + " : " + bsum);
-
-  return averageColor;
-}
 
 void displayInfo() {
   //display on console
-  println("success " + success);
-  //println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
+  println("success " + population.getSuccess());
+  int[] fitrgb = population.getFitrgb();
+  println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
   
   //display generation count
   textSize(20);
@@ -142,7 +100,7 @@ void displayInfo() {
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
   text("Time : " + hour + ":" + minute + ":" + second, 130, target.height + 14);
-  //text("Fitness : " + fitness / 3, 330, target.height + 14);
+  text("Fitness : " + population.getFitness() / 3, 330, target.height + 14);
 }
 
 void keyPressed() {
@@ -216,11 +174,9 @@ void keyPressed() {
 }
 
 void exit() {
-
+  
   saveTable(table, "projects/" + projectName + "/data.csv");
-  println("saving canvas..");
-  canvas.save("projects/" + projectName + "/result.png");
-  println("saving dna");
+  
   population.savefile();
 
   PGraphics scanvas; //Ga drawing render
