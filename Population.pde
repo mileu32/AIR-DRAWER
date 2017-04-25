@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 11
-// Population version 1.2.0 beta build 7
+// AIR-DRAWER version 1.2.0 beta build 12
+// Population version 1.2.0 beta build 8
 // DNA version 1.2.0 beta build 11
 
 // A class to describe a population of virtual organisms
@@ -12,10 +12,15 @@ class Population {
 
   int dnaSize;
 
-  color backgroundColor;
+  private color backgroundColor;
 
-  int fitness, lastFitness;
-  int[] fitrgb, lastFitrgb = new int[3];
+  private int fitness, lastFitness;
+  private int[] fitrgb, lastFitrgb = new int[3];
+
+  private int success;
+
+  private PGraphics canvas; // GA drawing
+  private PGraphics c_canvas1; //Ga drawing cache
 
   Population(int popNum, int dnaSize) {
     population = new DNA[popNum];
@@ -29,6 +34,12 @@ class Population {
 
     backgroundColor = selectBackgroundColor(target);
     backgroundColor = color(249, 239, 227);
+
+    canvas = createGraphics(target.width, target.height);
+    canvas.beginDraw();
+    canvas.background(backgroundColor);
+    canvas.endDraw();
+    c_canvas1 = createGraphics(target.width, target.height);
 
     fitrgb = calFitness();
     lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
@@ -56,6 +67,8 @@ class Population {
 
   void mutate() {
 
+    success = 0;
+
     for (int i = 0; i < population.length; i++) {
       population[i].mutate(preset);
       display(i);
@@ -68,7 +81,7 @@ class Population {
         copyFromOrigToBack();
         lastFitness = fitness;
         lastFitrgb = fitrgb;
-        
+
         success++;
       } else {
         copyFromBackToOrig();
@@ -82,11 +95,41 @@ class Population {
     }
   }
 
+
+  int getFitness() {
+    return fitness;
+  }
+
+  int[] getFitrgb() {
+    return fitrgb;
+  }
+
+  int getSuccess() {
+    return success;
+  }
+
+  int getBackgroundColor() {
+    return backgroundColor;
+  }
+
+  PGraphics getCanvas() {
+    return canvas;
+  }
+
+  void setBackgroundColor(color c) {
+    backgroundColor = c;
+  }
+
   void savefile() {
+    println("saving canvas..");
+    canvas.save("projects/" + projectName + "/result.png");
+
+    println("saving dna..");
     PrintWriter output = createWriter("projects/" + projectName + "/dna.air");
 
     output.println("MILEUAIR v1.0.0");     //file version
     output.println("#256");                //Optimized resolution
+    output.println(red(backgroundColor) + ":" + green(backgroundColor) + ":" + blue(backgroundColor));  //backgroundColor
 
     for (int i = 0; i < population.length; i++)
       output.println(populationBack[i].toString());
@@ -119,6 +162,34 @@ class Population {
     }  
 
     return fit;
+  }
+
+  color selectBackgroundColor(PImage image) {
+    int rsum = 0, gsum = 0, bsum = 0;
+    int totalpixel = image.width * image.height;
+    color averageColor;
+
+    for (int x = 0; x < image.width; x++) {
+      for (int y = 0; y < image.height; y++) {
+        int loc = x + y*target.width;
+        //int comploc = x + (y+(target.height))*target.width;
+        color sourcepix = image.pixels[loc];
+
+        //find the error in color (0 to 255, 0 is no error)
+        rsum += red(sourcepix);
+        gsum += green(sourcepix);
+        bsum += blue(sourcepix);
+      }
+    }
+
+    rsum = rsum / totalpixel;
+    gsum = gsum / totalpixel;
+    bsum = bsum / totalpixel;
+
+    averageColor = color(rsum, gsum, bsum);
+    println(rsum + " : " + gsum + " : " + bsum);
+
+    return averageColor;
   }
 
   DNA getDNA(int i) {
