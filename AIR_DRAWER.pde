@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 12
-// Population version 1.2.0 beta build 8
+// AIR-DRAWER version 1.2.0 beta build 13
+// Population version 1.2.0 beta build 9
 // DNA version 1.2.0 beta build 11
 
 //data of times and fitness
@@ -9,7 +9,6 @@ Boolean ifContinue = true;
 int endCount = 0;
 
 PFont f;
-PImage target;
 
 int popmax;
 int dnaSize;
@@ -23,14 +22,15 @@ String projectName = year() + "00".substring(str(month()).length()) + str(month(
 
 void setup() {
   size(512, 288);
+  
+  pixelDensity(displayDensity());
 
   noStroke();
   smooth();
 
   f = createFont("Courier", 20, true);
-  target = loadImage("Illya256crop.jpg");
+  
 
-  surface.setSize(target.width *2, target.height + 32);
   surface.setTitle("AIR-DRAWER v1.2.0 beta");
 
   table.addColumn("Gen");
@@ -38,19 +38,19 @@ void setup() {
   table.addColumn("Fitness");
   table.addColumn("Success");
 
-  popmax = 200;
+  popmax = 2000;
   dnaSize = 8;
 
-  target.loadPixels();
-
   // Create a populationation with a target , mutation rate, and populationation max
-  population = new Population(popmax, dnaSize);
+  PImage target;
+  target = loadImage("Illya256crop.jpg");
+  population = new Population(popmax, dnaSize, target);
   
 }
 
 void draw() {
 
-  if (frameCount == 1) image(target, 0, 0);
+  if (frameCount == 1) image(population.getTarget(), 0, 0);
 
   if (ifContinue) {
 
@@ -58,7 +58,7 @@ void draw() {
     
     gen++;
 
-    image(population.getCanvas(), target.width, 0);
+    image(population.getCanvas(), population.getTarget().width, 0);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
     newRow.setInt("Time", millis());
@@ -75,8 +75,6 @@ void draw() {
   saveFrame("projects/" + projectName + "/frames/#####.jpg");
 }
 
-
-
 void displayInfo() {
   //display on console
   println("success " + population.getSuccess());
@@ -88,9 +86,9 @@ void displayInfo() {
   textAlign(LEFT, CENTER);
 
   fill(0);
-  rect(0, target.height, target.width * 2, 32);
+  rect(0, population.getTarget().height, population.getTarget().width * 2, 32);
   fill(0, 255, 255);
-  text("Gen : " + gen, 10, target.height + 14);
+  text("Gen : " + gen, 10, population.getTarget().height + 14);
   String hour = "00";
   String minute = "00";
   String second = "00";
@@ -99,8 +97,8 @@ void displayInfo() {
   minute = "00".substring(str((millis()/60000)%60).length()) + str((millis()/60000)%60);
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
-  text("Time : " + hour + ":" + minute + ":" + second, 130, target.height + 14);
-  text("Fitness : " + population.getFitness() / 3, 330, target.height + 14);
+  text("Time : " + hour + ":" + minute + ":" + second, 130, population.getTarget().height + 14);
+  text("Fitness : " + population.getFitness() / 3, 330, population.getTarget().height + 14);
 }
 
 void keyPressed() {
@@ -181,7 +179,7 @@ void exit() {
 
   PGraphics scanvas; //Ga drawing render
 
-  scanvas = createGraphics(target.width * 16, target.height * 16);
+  scanvas = createGraphics(population.getTarget().width * 16, population.getTarget().height * 16);
   scanvas.smooth();
   scanvas.beginDraw();
   scanvas.noStroke();
