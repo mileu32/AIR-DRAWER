@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 12
-// Population version 1.2.0 beta build 8
+// AIR-DRAWER version 1.2.0 beta build 13
+// Population version 1.2.0 beta build 9
 // DNA version 1.2.0 beta build 11
 
 // A class to describe a population of virtual organisms
@@ -19,10 +19,12 @@ class Population {
 
   private int success;
 
+  PImage target;
+
   private PGraphics canvas; // GA drawing
   private PGraphics c_canvas1; //Ga drawing cache
 
-  Population(int popNum, int dnaSize) {
+  Population(int popNum, int dnaSize, PImage target) {
     population = new DNA[popNum];
     populationBack = new DNA[popNum];
 
@@ -31,6 +33,8 @@ class Population {
       population[i] =new DNA(dnaSize);
       populationBack[i] = new DNA(dnaSize);
     }
+
+    this.target = target;
 
     backgroundColor = selectBackgroundColor(target);
     backgroundColor = color(249, 239, 227);
@@ -115,6 +119,10 @@ class Population {
   PGraphics getCanvas() {
     return canvas;
   }
+  
+  PImage getTarget() {
+    return target;
+  }
 
   void setBackgroundColor(color c) {
     backgroundColor = c;
@@ -168,6 +176,8 @@ class Population {
     int rsum = 0, gsum = 0, bsum = 0;
     int totalpixel = image.width * image.height;
     color averageColor;
+  
+    target.loadPixels();
 
     for (int x = 0; x < image.width; x++) {
       for (int y = 0; y < image.height; y++) {
