@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 13
-// Population version 1.2.0 beta build 9
+// AIR-DRAWER version 1.2.0 beta build 14
+// Population version 1.2.0 beta build 10
 // DNA version 1.2.0 beta build 11
 
 //data of times and fitness
@@ -7,10 +7,10 @@ Table table = new Table();
 
 Boolean ifContinue = true;
 int endCount = 0;
+int addPopCount = 0;
 
 PFont f;
 
-int popmax;
 int dnaSize;
 Population population;
 
@@ -22,14 +22,13 @@ String projectName = year() + "00".substring(str(month()).length()) + str(month(
 
 void setup() {
   size(512, 288);
-  
-  pixelDensity(displayDensity());
+
+  //pixelDensity(displayDensity());
 
   noStroke();
   smooth();
 
   f = createFont("Courier", 20, true);
-  
 
   surface.setTitle("AIR-DRAWER v1.2.0 beta");
 
@@ -38,14 +37,13 @@ void setup() {
   table.addColumn("Fitness");
   table.addColumn("Success");
 
-  popmax = 2000;
+  int popmax = 100;
   dnaSize = 8;
 
   // Create a populationation with a target , mutation rate, and populationation max
   PImage target;
-  target = loadImage("Illya256crop.jpg");
+  target = loadImage("world256.png");
   population = new Population(popmax, dnaSize, target);
-  
 }
 
 void draw() {
@@ -54,8 +52,23 @@ void draw() {
 
   if (ifContinue) {
 
-    population.mutate();
-    
+    if (addPopCount > 0) {
+
+      if (addPopCount > 300) preset = "UltraFast";
+      else if (addPopCount > 100) preset = "Medium";
+      else if (addPopCount > 1) preset = "Color";
+      else preset = "UltraFast";
+
+      population.mutate(population.getPopLength() - 50);
+      addPopCount -= 1;
+    } else {
+      population.mutate();
+      if (preset.equals("UltraFast") & population.getSuccess() < 5) {
+        population.addPop(50);
+        addPopCount = 600;
+      }
+    }
+
     gen++;
 
     image(population.getCanvas(), population.getTarget().width, 0);
@@ -64,23 +77,23 @@ void draw() {
     newRow.setInt("Time", millis());
     newRow.setInt("Fitness", population.getFitness());
     newRow.setInt("Success", population.getSuccess());
-    
+
     displayInfo();
-    
   } else {
     exit();
     noLoop();
   }
-  
+
   saveFrame("projects/" + projectName + "/frames/#####.jpg");
 }
 
 void displayInfo() {
+
   //display on console
   println("success " + population.getSuccess());
   int[] fitrgb = population.getFitrgb();
   println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
-  
+
   //display generation count
   textSize(20);
   textAlign(LEFT, CENTER);
@@ -172,9 +185,9 @@ void keyPressed() {
 }
 
 void exit() {
-  
+
   saveTable(table, "projects/" + projectName + "/data.csv");
-  
+
   population.savefile();
 
   PGraphics scanvas; //Ga drawing render
@@ -186,14 +199,14 @@ void exit() {
   scanvas.background(population.backgroundColor);
   scanvas.endDraw();
 
-  for (int i = 0; i < population.population.length; i++) {
+  for (int i = 0; i < population.getPopLength(); i++) {
     scanvas.beginDraw();
     population.population[i].draw(scanvas);
     scanvas.endDraw();
     String count = "00000".substring(str(i).length()) + str(i);
-    println(i + "/" + population.population.length);
+    println(i + "/" + population.getPopLength());
     scanvas.save("projects/" + projectName + "/draw/" + count + ".jpg");
   }
-  
+
   scanvas.save("projects/" + projectName + "/result(16x).png");
 }
