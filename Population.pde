@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 beta build 13
-// Population version 1.2.0 beta build 9
+// AIR-DRAWER version 1.2.0 beta build 14
+// Population version 1.2.0 beta build 10
 // DNA version 1.2.0 beta build 11
 
 // A class to describe a population of virtual organisms
@@ -11,6 +11,7 @@ class Population {
   DNA[] populationBack;      // Backup population
 
   int dnaSize;
+  private int popLength;
 
   private color backgroundColor;
 
@@ -19,17 +20,26 @@ class Population {
 
   private int success;
 
-  PImage target;
+  private PImage target;
 
   private PGraphics canvas; // GA drawing
   private PGraphics c_canvas1; //Ga drawing cache
 
-  Population(int popNum, int dnaSize, PImage target) {
-    population = new DNA[popNum];
-    populationBack = new DNA[popNum];
+  Population(int popLength, int dnaSize, PImage target) {
+
+    if (popLength > 10000) {
+      println("error : popLength is up to 10000");
+      popLength = 10000;
+    }
+
+    this.popLength = popLength;
+
+    population = new DNA[10000];
+    populationBack = new DNA[10000];
 
     this.dnaSize = dnaSize;
-    for (int i = 0; i < population.length; i++) {
+
+    for (int i = 0; i < popLength; i++) {
       population[i] =new DNA(dnaSize);
       populationBack[i] = new DNA(dnaSize);
     }
@@ -37,7 +47,7 @@ class Population {
     this.target = target;
 
     backgroundColor = selectBackgroundColor(target);
-    backgroundColor = color(249, 239, 227);
+    //backgroundColor = color(249, 239, 227);
 
     canvas = createGraphics(target.width, target.height);
     canvas.beginDraw();
@@ -52,9 +62,17 @@ class Population {
     fitness = lastFitness;
   }
 
-  void display(int newDNA) {
+  void display() {
+    canvas.beginDraw();
+    canvas.background(backgroundColor);
+    for (int i = 0; i < popLength; i++)
+      population[i].draw(canvas);
+    canvas.endDraw();
+  }
+
+  void display(int target) {
     //canvas = c_canvas;
-    if (newDNA == 0) {
+    if (target == 0) {
       c_canvas1.beginDraw();
       c_canvas1.background(backgroundColor);
       c_canvas1.endDraw();
@@ -63,17 +81,70 @@ class Population {
     canvas.beginDraw();
 
     canvas.image(c_canvas1, 0, 0);
-    for (int i = newDNA; i < popmax; i++) {
+    for (int i = target; i < popLength; i++)
       population[i].draw(canvas);
-    }
     canvas.endDraw();
   }
 
-  void mutate() {
+  void display(int start, int target) {
+    //canvas = c_canvas;
+    if (target == start) {
+      c_canvas1.beginDraw();
+      c_canvas1.background(backgroundColor);
+      for (int i = 0; i < start; i++)
+        population[i].draw(c_canvas1);
+      c_canvas1.endDraw();
+    }
+
+    canvas.beginDraw();
+
+    canvas.image(c_canvas1, 0, 0);
+    for (int i = target; i < popLength; i++)
+      population[i].draw(canvas);
+
+    canvas.endDraw();
+  }
+
+  int mutate(int start) {
 
     success = 0;
 
-    for (int i = 0; i < population.length; i++) {
+    for (int i = start; i < popLength; i++) {
+
+      population[i].mutate(preset);
+      display(start, i);
+
+      fitrgb = calFitness();
+      fitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
+
+      //if before draw is better, rollback
+      if (fitness < lastFitness) {
+        copyFromOrigToBack();
+        lastFitness = fitness;
+        lastFitrgb = fitrgb;
+
+        success++;
+      } else {
+        copyFromBackToOrig();
+        fitness = lastFitness;
+        fitrgb = lastFitrgb;
+      }
+
+      c_canvas1.beginDraw();
+      population[i].draw(c_canvas1);
+      c_canvas1.endDraw();
+    }
+
+    //No errors have occurred
+    return 0;
+  }
+
+  int mutate() {
+
+    success = 0;
+
+    for (int i = 0; i < popLength; i++) {
+
       population[i].mutate(preset);
       display(i);
 
@@ -97,8 +168,50 @@ class Population {
       population[i].draw(c_canvas1);
       c_canvas1.endDraw();
     }
+
+    //No errors have occurred
+    return 0;
   }
 
+  int addPop() {
+    return addPop(50);
+  }
+
+  int addPop(int n) {
+
+    if (popLength + n > 10000) {
+      println("error : popLength is up to 10000");
+      return -1;
+    }
+
+    for (int i = popLength; i < popLength + n; i++) {
+      population[i] =new DNA(dnaSize);
+      populationBack[i] = new DNA(dnaSize);
+    }
+
+    popLength = popLength + n;
+    println("popLength : " + popLength);
+
+    display();
+
+    fitrgb = calFitness();
+    lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
+    lastFitrgb = fitrgb;
+    fitness = lastFitness;
+
+    //No errors have occurred
+    return 0;
+  }
+  
+  int removePop(){
+    
+    //No errors have occurred
+    return 0;
+  }
+
+  int getPopLength() {
+    return popLength;
+  }
 
   int getFitness() {
     return fitness;
@@ -119,7 +232,7 @@ class Population {
   PGraphics getCanvas() {
     return canvas;
   }
-  
+
   PImage getTarget() {
     return target;
   }
@@ -139,7 +252,7 @@ class Population {
     output.println("#256");                //Optimized resolution
     output.println(red(backgroundColor) + ":" + green(backgroundColor) + ":" + blue(backgroundColor));  //backgroundColor
 
-    for (int i = 0; i < population.length; i++)
+    for (int i = 0; i < popLength; i++)
       output.println(populationBack[i].toString());
 
     output.flush(); // Writes the remaining data to the file
@@ -176,7 +289,7 @@ class Population {
     int rsum = 0, gsum = 0, bsum = 0;
     int totalpixel = image.width * image.height;
     color averageColor;
-  
+
     target.loadPixels();
 
     for (int x = 0; x < image.width; x++) {
@@ -207,7 +320,7 @@ class Population {
   }
 
   void copyFromOrigToBack() {
-    for (int i = 0; i < population.length; i++)
+    for (int i = 0; i < popLength; i++)
       for (int j = 0; j < dnaSize; j++)
         populationBack[i].genes[j] = population[i].genes[j];
   }
@@ -218,7 +331,7 @@ class Population {
   }
 
   void copyFromBackToOrig() {
-    for (int i = 0; i < population.length; i++)
+    for (int i = 0; i < popLength; i++)
       for (int j = 0; j < dnaSize; j++)
         population[i].genes[j] = populationBack[i].genes[j];
   }
