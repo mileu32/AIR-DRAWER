@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 beta build 14
-// Population version 1.2.0 beta build 10
-// DNA version 1.2.0 beta build 11
+// AIR-DRAWER version 1.2.0 build 15
+// Population version 1.2.0 build 11
+// DNA version 1.2.0 build 11
 
 //data of times and fitness
 Table table = new Table();
@@ -30,7 +30,7 @@ void setup() {
 
   f = createFont("Courier", 20, true);
 
-  surface.setTitle("AIR-DRAWER v1.2.0 beta");
+  surface.setTitle("AIR-DRAWER v1.2.0");
 
   table.addColumn("Gen");
   table.addColumn("Time");
@@ -90,7 +90,7 @@ void draw() {
 void displayInfo() {
 
   //display on console
-  println("success " + population.getSuccess());
+  println("success " + population.getSuccess() + "  DNA SIZE " + population.getPopLength());
   int[] fitrgb = population.getFitrgb();
   println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
 
@@ -110,7 +110,7 @@ void displayInfo() {
   minute = "00".substring(str((millis()/60000)%60).length()) + str((millis()/60000)%60);
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
-  text("Time : " + hour + ":" + minute + ":" + second, 130, population.getTarget().height + 14);
+  text("Time : " + hour + ":" + minute + ":" + second, 150, population.getTarget().height + 14);
   text("Fitness : " + population.getFitness() / 3, 330, population.getTarget().height + 14);
 }
 
