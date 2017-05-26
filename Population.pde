@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 beta build 14
-// Population version 1.2.0 beta build 10
-// DNA version 1.2.0 beta build 11
+// AIR-DRAWER version 1.2.0 build 15
+// Population version 1.2.0 build 11
+// DNA version 1.2.0 build 11
 
 // A class to describe a population of virtual organisms
 // In this case, each organism is just an instance of a DNA object
@@ -62,30 +62,6 @@ class Population {
     fitness = lastFitness;
   }
 
-  void display() {
-    canvas.beginDraw();
-    canvas.background(backgroundColor);
-    for (int i = 0; i < popLength; i++)
-      population[i].draw(canvas);
-    canvas.endDraw();
-  }
-
-  void display(int target) {
-    //canvas = c_canvas;
-    if (target == 0) {
-      c_canvas1.beginDraw();
-      c_canvas1.background(backgroundColor);
-      c_canvas1.endDraw();
-    }
-
-    canvas.beginDraw();
-
-    canvas.image(c_canvas1, 0, 0);
-    for (int i = target; i < popLength; i++)
-      population[i].draw(canvas);
-    canvas.endDraw();
-  }
-
   void display(int start, int target) {
     //canvas = c_canvas;
     if (target == start) {
@@ -102,6 +78,18 @@ class Population {
     for (int i = target; i < popLength; i++)
       population[i].draw(canvas);
 
+    canvas.endDraw();
+  }
+
+  void display(int target) {
+    display(0, target);
+  }
+
+  void display() {
+    canvas.beginDraw();
+    canvas.background(backgroundColor);
+    for (int i = 0; i < popLength; i++)
+      population[i].draw(canvas);
     canvas.endDraw();
   }
 
