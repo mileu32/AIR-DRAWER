@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.3.0 beta build 17
-// Population version 1.3.0 beta build 12
+// AIR-DRAWER version 1.3.0 beta build 18
+// Population version 1.3.0 beta build 13
 // DNA version 1.2.0 build 11
 
 // A class to describe a population of virtual organisms
@@ -28,7 +28,7 @@ class Population {
   Population(int popLength, int dnaSize, PImage target) {
 
     if (popLength > 10000) {
-      println("error : popLength is up to 10000");
+      printM("error : popLength is up to 10000");
       popLength = 10000;
     }
 
@@ -169,7 +169,7 @@ class Population {
   int addPop(int n) {
 
     if (popLength + n > 10000) {
-      println("error : popLength is up to 10000");
+      printM("error : popLength is up to 10000");
       return -1;
     }
 
@@ -179,7 +179,7 @@ class Population {
     }
 
     popLength = popLength + n;
-    println("popLength : " + popLength);
+    printM("popLength : " + popLength);
 
     display();
 
@@ -231,10 +231,10 @@ class Population {
   }
 
   void savefile() {
-    println("saving canvas..");
+    printM("saving canvas..");
     canvas.save("projects/" + projectName + "/result.png");
 
-    println("saving dna..");
+    printM("saving dna..");
     PrintWriter output = createWriter("projects/" + projectName + "/dna.air");
 
     output.println("MILEUAIR v1.0.0");     //file version
@@ -348,7 +348,7 @@ class Population {
     bsum = bsum / totalpixel;
 
     averageColor = color(rsum, gsum, bsum);
-    println(rsum + " : " + gsum + " : " + bsum);
+    printM(rsum + " : " + gsum + " : " + bsum);
 
     return averageColor;
   }
