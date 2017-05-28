@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.2.0 build 15
-// Population version 1.2.0 build 11
+// AIR-DRAWER version 1.3.0 beta build 17
+// Population version 1.3.0 beta build 12
 // DNA version 1.2.0 build 11
 
 // A class to describe a population of virtual organisms
@@ -46,8 +46,9 @@ class Population {
 
     this.target = target;
 
-    backgroundColor = selectBackgroundColor(target);
+    //backgroundColor = selectBackgroundColor(target);
     //backgroundColor = color(249, 239, 227);
+    backgroundColor = color(255);
 
     canvas = createGraphics(target.width, target.height);
     canvas.beginDraw();
@@ -190,9 +191,9 @@ class Population {
     //No errors have occurred
     return 0;
   }
-  
-  int removePop(){
-    
+
+  int removePop() {
+
     //No errors have occurred
     return 0;
   }
@@ -271,6 +272,55 @@ class Population {
     }  
 
     return fit;
+  }
+
+  PImage[] diffImage() {
+
+    PGraphics[] diffImage = new PGraphics[3]; // 0 : Red, 1 : Green, 2 : Blue
+
+    for (int i = 0; i < diffImage.length; i++) {
+      diffImage[i] = createGraphics(target.width, target.height);
+      diffImage[i].beginDraw();
+      diffImage[i].background(backgroundColor);
+      diffImage[i].endDraw();
+    }
+
+    float rerr = 1, gerr = 1, berr = 1;
+
+    for (int x = 0; x < target.width; x++) {
+      for (int y = 0; y < target.height; y++) {
+        int loc = x + y*target.width;
+        //int comploc = x + (y+(target.height))*target.width;
+        color sourcepix = target.pixels[loc];
+        color comparepix = canvas.pixels[loc];
+
+        //find the error in color (0 to 255, 0 is no error)
+        rerr = max(rerr, abs(red(sourcepix)-red(comparepix)));
+        gerr = max(gerr, abs(green(sourcepix)-green(comparepix)));
+        berr = max(berr, abs(blue(sourcepix)-blue(comparepix)));
+      }
+    }
+    
+    for (int i = 0; i < diffImage.length; i++)
+      diffImage[i].loadPixels();
+    
+    for (int x = 0; x < target.width; x++) {
+      for (int y = 0; y < target.height; y++) {
+        int loc = x + y*target.width;
+        //int comploc = x + (y+(target.height))*target.width;
+        color sourcepix = target.pixels[loc];
+        color comparepix = canvas.pixels[loc];
+        
+        diffImage[0].pixels[loc] = color(abs(red(sourcepix)-red(comparepix)) * 255 / rerr, 0, 0);
+        diffImage[1].pixels[loc] = color(0, abs(green(sourcepix)-green(comparepix)) * 255 / gerr, 0);
+        diffImage[2].pixels[loc] = color(0, 0, abs(blue(sourcepix)-blue(comparepix)) * 255 / berr);
+      }
+    }
+    
+    for (int i = 0; i < diffImage.length; i++)
+      diffImage[i].updatePixels();
+
+    return diffImage;
   }
 
   color selectBackgroundColor(PImage image) {
