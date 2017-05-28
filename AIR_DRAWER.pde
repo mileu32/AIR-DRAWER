@@ -1,4 +1,4 @@
-// AIR-DRAWER version 1.2.0 build 15
+// AIR-DRAWER version 1.3.0 beta build 16
 // Population version 1.2.0 build 11
 // DNA version 1.2.0 build 11
 
@@ -21,14 +21,14 @@ String preset = "UltraFast";
 String projectName = year() + "00".substring(str(month()).length()) + str(month()) + "00".substring(str(day()).length()) + str(day()) + "00".substring(str(hour()).length()) + str(hour()) + "00".substring(str(minute()).length()) + str(minute()) + "_AIR";
 
 void setup() {
-  size(512, 288);
+  size(1080, 608);
 
   //pixelDensity(displayDensity());
 
   noStroke();
   smooth();
 
-  f = createFont("Courier", 20, true);
+  f = createFont("Courier", 50, true);
 
   surface.setTitle("AIR-DRAWER v1.2.0");
 
@@ -40,15 +40,25 @@ void setup() {
   int popmax = 100;
   dnaSize = 8;
 
+  background(127);
+
   // Create a populationation with a target , mutation rate, and populationation max
   PImage target;
-  target = loadImage("world256.png");
+  target = loadImage("xp.jpg");
   population = new Population(popmax, dnaSize, target);
+
+  PImage mileuIcon;
+  mileuIcon = loadImage("mileu.png");
+
+  fill(255);
+
+  image(target, 32, 32);
+
+  rect(256 + 64, 32, 256, 256);
+  image(mileuIcon, 256 + 64, 32, 256, 256);
 }
 
 void draw() {
-
-  if (frameCount == 1) image(population.getTarget(), 0, 0);
 
   if (ifContinue) {
 
@@ -71,14 +81,14 @@ void draw() {
 
     gen++;
 
-    image(population.getCanvas(), population.getTarget().width, 0);
+    image(population.getCanvas(), 32, population.getTarget().height + 64);
     TableRow newRow = table.addRow();
     newRow.setInt("Gen", gen);
     newRow.setInt("Time", millis());
     newRow.setInt("Fitness", population.getFitness());
     newRow.setInt("Success", population.getSuccess());
 
-    displayInfo();
+    displayInfo(population.getTarget().width * 2 + 64, population.getTarget().height, population.getTarget().width * 2, 32);
   } else {
     exit();
     noLoop();
@@ -87,7 +97,7 @@ void draw() {
   saveFrame("projects/" + projectName + "/frames/#####.jpg");
 }
 
-void displayInfo() {
+void displayInfo(int x1, int y1, int x2, int y2) {
 
   //display on console
   println("success " + population.getSuccess() + "  DNA SIZE " + population.getPopLength());
@@ -95,13 +105,13 @@ void displayInfo() {
   println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
 
   //display generation count
-  textSize(20);
   textAlign(LEFT, CENTER);
+  textFont(f, 20); 
 
   fill(0);
-  rect(0, population.getTarget().height, population.getTarget().width * 2, 32);
+  rect(x1, y1, x2, y2);
   fill(0, 255, 255);
-  text("Gen : " + gen, 10, population.getTarget().height + 14);
+  text("Gen : " + gen, x1 + 10, y1 + 14);
   String hour = "00";
   String minute = "00";
   String second = "00";
@@ -110,8 +120,8 @@ void displayInfo() {
   minute = "00".substring(str((millis()/60000)%60).length()) + str((millis()/60000)%60);
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
-  text("Time : " + hour + ":" + minute + ":" + second, 150, population.getTarget().height + 14);
-  text("Fitness : " + population.getFitness() / 3, 330, population.getTarget().height + 14);
+  text("시간 : " + hour + ":" + minute + ":" + second, x1 + 150, y1 + 14);
+  text("정밀도 : " + population.getFitness() / 3, x1 + 330, y1 + 14);
 }
 
 void keyPressed() {
