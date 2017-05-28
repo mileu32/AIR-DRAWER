@@ -1,8 +1,13 @@
-// AIR-DRAWER version 1.3.0 beta build 16
-// Population version 1.2.0 build 11
+// AIR-DRAWER version 1.3.0 beta build 17
+// Population version 1.3.0 beta build 12
 // DNA version 1.2.0 build 11
 
 //data of times and fitness
+
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.Mem;
+import org.hyperic.sigar.SigarException;
+
 Table table = new Table();
 
 Boolean ifContinue = true;
@@ -30,7 +35,7 @@ void setup() {
 
   f = createFont("Courier", 50, true);
 
-  surface.setTitle("AIR-DRAWER v1.2.0");
+  surface.setTitle("AIR-DRAWER v1.3.0 beta");
 
   table.addColumn("Gen");
   table.addColumn("Time");
@@ -56,9 +61,11 @@ void setup() {
 
   rect(256 + 64, 32, 256, 256);
   image(mileuIcon, 256 + 64, 32, 256, 256);
+  
 }
 
 void draw() {
+  if(millis() > 10000 && millis() < 100000) displaySystemInfo(256 + 64, 32, 256, 256);
 
   if (ifContinue) {
 
@@ -89,6 +96,7 @@ void draw() {
     newRow.setInt("Success", population.getSuccess());
 
     displayInfo(population.getTarget().width * 2 + 64, population.getTarget().height, population.getTarget().width * 2, 32);
+    displayDiff(256 + 64, 256 + 64, 256, 256);
   } else {
     exit();
     noLoop();
@@ -96,6 +104,65 @@ void draw() {
 
   saveFrame("projects/" + projectName + "/frames/#####.jpg");
 }
+
+void displayDiff(int x1, int y1, int x2, int y2) {
+  PImage[] diffImage = population.diffImage();
+  image(diffImage[0], x1, y1, 128, 128);
+  image(diffImage[1], x1 + 128, y1, 128, 128);
+  image(diffImage[2], x1, y1 + 128, 128, 128);
+
+  textAlign(LEFT, CENTER);
+  textFont(f, 20);
+  fill(192);
+  rect(x1 + 128, y1 + 128, 128, 128);
+  fill(255, 0, 0);
+  text("R : " + population.getFitrgb()[0], x1 + 128 + 10, y1 + 128 + 32);
+  fill(0, 255, 0);
+  text("G : " + population.getFitrgb()[1], x1 + 128 + 10, y1 + 128 + 64);
+  fill(0, 0, 255);
+  text("B : " + population.getFitrgb()[2], x1 + 128 + 10, y1 + 128 + 96);
+}
+
+void displaySystemInfo(int x1, int y1, int x2, int y2) {
+
+  fill(192);
+  rect(x1, y1, x2, y2);
+
+  textAlign(CENTER, CENTER);
+  textFont(f, 30);
+  fill(0);
+
+  text("AIR-DRAWER", x1 + x2 / 2, y1 + 30);
+  
+  textFont(f, 20);
+  fill(255, 0, 0);
+  
+  text("v1.3.0b", x1 + x2 / 2, y1 + 60);
+
+  String cpu = "";
+
+  try {
+    Sigar sigar = new Sigar();
+    org.hyperic.sigar.CpuInfo[] cpuInfoList = sigar.getCpuInfoList();
+    for (org.hyperic.sigar.CpuInfo info : cpuInfoList)
+      cpu = info.getModel();
+  } 
+  catch (Exception e) {
+  }
+
+  textAlign(LEFT, CENTER);
+  textFont(f, 20);
+  fill(0);
+
+  text("System", x1 + 10, y1 + 125);
+  
+  textFont(f, 13);
+  text("CPU : " + cpu, x1 + 5, y1 + 155);
+  text("RAM : " + Runtime.getRuntime().maxMemory()/pow(2, 30) + " GB", x1 + 5, y1 + 180);
+  text("OS : " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"), x1 + 5, y1 + 205);
+  text("JAVA : " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"), x1 + 5, y1 + 230);
+}
+
 
 void displayInfo(int x1, int y1, int x2, int y2) {
 
