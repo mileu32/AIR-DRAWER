@@ -1,14 +1,14 @@
-// AIR-DRAWER version 1.3.0 beta build 17
-// Population version 1.3.0 beta build 12
+// AIR-DRAWER version 1.3.0 beta build 18
+// Population version 1.3.0 beta build 13
 // DNA version 1.2.0 build 11
-
-//data of times and fitness
 
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.SigarException;
 
+//data of times and fitness
 Table table = new Table();
+PrintWriter log;
 
 Boolean ifContinue = true;
 int endCount = 0;
@@ -24,6 +24,8 @@ int gen;
 String preset = "UltraFast";
 
 String projectName = year() + "00".substring(str(month()).length()) + str(month()) + "00".substring(str(day()).length()) + str(day()) + "00".substring(str(hour()).length()) + str(hour()) + "00".substring(str(minute()).length()) + str(minute()) + "_AIR";
+
+ArrayList<String> print = new ArrayList<String>();
 
 void setup() {
   size(1080, 608);
@@ -49,23 +51,27 @@ void setup() {
 
   // Create a populationation with a target , mutation rate, and populationation max
   PImage target;
-  target = loadImage("xp.jpg");
+  target = loadImage("Illya256crop.jpg");
   population = new Population(popmax, dnaSize, target);
 
   PImage mileuIcon;
   mileuIcon = loadImage("mileu.png");
 
-  fill(255);
-
   image(target, 32, 32);
 
+  fill(192);
   rect(256 + 64, 32, 256, 256);
   image(mileuIcon, 256 + 64, 32, 256, 256);
+
+  log = createWriter(".log.txt");
+  log.println("Log created date : "+year()+"/"+month()+"/"+day()+" "+hour()+":"+minute()+":"+second()+"."+millis());
+  log.println(projectName);
   
+  printM("AIR-DRAWER version 1.3.0 beta build 18");
 }
 
 void draw() {
-  if(millis() > 10000 && millis() < 100000) displaySystemInfo(256 + 64, 32, 256, 256);
+  if (millis() > 10000 && millis() < 100000) displaySystemInfo(256 + 64, 32, 256, 256);
 
   if (ifContinue) {
 
@@ -95,8 +101,9 @@ void draw() {
     newRow.setInt("Fitness", population.getFitness());
     newRow.setInt("Success", population.getSuccess());
 
-    displayInfo(population.getTarget().width * 2 + 64, population.getTarget().height, population.getTarget().width * 2, 32);
     displayDiff(256 + 64, 256 + 64, 256, 256);
+    displayInfo(256 * 2 + 32 * 3, 32, 440, 32);
+    displayPrintM(256 * 2 + 32 * 3, 32 *3, 440, 480);
   } else {
     exit();
     noLoop();
@@ -133,10 +140,10 @@ void displaySystemInfo(int x1, int y1, int x2, int y2) {
   fill(0);
 
   text("AIR-DRAWER", x1 + x2 / 2, y1 + 30);
-  
+
   textFont(f, 20);
   fill(255, 0, 0);
-  
+
   text("v1.3.0b", x1 + x2 / 2, y1 + 60);
 
   String cpu = "";
@@ -155,7 +162,7 @@ void displaySystemInfo(int x1, int y1, int x2, int y2) {
   fill(0);
 
   text("System", x1 + 10, y1 + 125);
-  
+
   textFont(f, 13);
   text("CPU : " + cpu, x1 + 5, y1 + 155);
   text("RAM : " + Runtime.getRuntime().maxMemory()/pow(2, 30) + " GB", x1 + 5, y1 + 180);
@@ -163,13 +170,33 @@ void displaySystemInfo(int x1, int y1, int x2, int y2) {
   text("JAVA : " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"), x1 + 5, y1 + 230);
 }
 
+void displayPrintM(int x1, int y1, int x2, int y2) {
+  textAlign(LEFT, CENTER);
+  textFont(f, 20);
+  fill(0);
+  rect(x1, y1, x2, y2);
+  fill(255);
+  while(print.size() > 18)
+    print.remove(0);
+    
+  for(int i = 0; i < print.size(); i++){
+    text(print.get(print.size() - i - 1), x1 + 10, y1 + 480 - 20 - 25 * i);
+  }
+}
+
+void printM(String message) {
+  System.out.println(message);
+  log.println(message);
+  log.flush();
+  print.add(message);
+}
 
 void displayInfo(int x1, int y1, int x2, int y2) {
 
   //display on console
-  println("success " + population.getSuccess() + "  DNA SIZE " + population.getPopLength());
+  printM("success " + population.getSuccess() + "  DNA SIZE " + population.getPopLength());
   int[] fitrgb = population.getFitrgb();
-  println(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
+  printM(fitrgb[0] + " : " + fitrgb[1] + " : " + fitrgb[2]);
 
   //display generation count
   textAlign(LEFT, CENTER);
@@ -178,7 +205,7 @@ void displayInfo(int x1, int y1, int x2, int y2) {
   fill(0);
   rect(x1, y1, x2, y2);
   fill(0, 255, 255);
-  text("Gen : " + gen, x1 + 10, y1 + 14);
+  
   String hour = "00";
   String minute = "00";
   String second = "00";
@@ -187,77 +214,76 @@ void displayInfo(int x1, int y1, int x2, int y2) {
   minute = "00".substring(str((millis()/60000)%60).length()) + str((millis()/60000)%60);
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
-  text("시간 : " + hour + ":" + minute + ":" + second, x1 + 150, y1 + 14);
-  text("정밀도 : " + population.getFitness() / 3, x1 + 330, y1 + 14);
+  text("세대 : " + gen + "   시간 : " + hour + ":" + minute + ":" + second + "   정밀도 : " + population.getFitness() / 3, x1 + 5, y1 + 13);
 }
 
 void keyPressed() {
   if ( key == 'q' || key == 'Q' || key == 'ㅂ') {
-    println("starting ending sequence");
+    printM("starting ending sequence");
     ifContinue = false;
   } else if ( key == '1') {
     preset = "UltraFast";
-    println("UltraFast");
+    printM("UltraFast");
   } else if ( key == '2') {
     preset = "SuperFast";
-    println("SuperFast");
+    printM("SuperFast");
   } else if ( key == '3') {
     preset = "VeryFast";
-    println("VeryFast");
+    printM("VeryFast");
   } else if ( key == '4') {
     preset = "Faster";
-    println("Faster");
+    printM("Faster");
   } else if ( key == '5') {
     preset = "Fast";
-    println("Fast");
+    printM("Fast");
   } else if ( key == '6') {
     preset = "Medium";
-    println("Medium");
+    printM("Medium");
   } else if ( key == '7') {
     preset = "Slow";
-    println("Slow");
+    printM("Slow");
   } else if ( key == '8') {
     preset = "Slower";
-    println("Slower");
+    printM("Slower");
   } else if (key == '9' ) {
     preset = "VerySlow";
-    println("VerySlow");
+    printM("VerySlow");
   } else if (key == '0' ) {
     preset = "Placebo";
-    println("Placebo");
+    printM("Placebo");
   } else if ( key == '!') {
     preset = "UltraFast(noRGB)";
-    println("UltraFast(noRGB)");
+    printM("UltraFast(noRGB)");
   } else if ( key == '@') {
     preset = "SuperFast(noRGB)";
-    println("SuperFast(noRGB)");
+    printM("SuperFast(noRGB)");
   } else if ( key == '#') {
     preset = "VeryFast(noRGB)";
-    println("VeryFast(noRGB)");
+    printM("VeryFast(noRGB)");
   } else if ( key == '$') {
     preset = "Faster(noRGB)";
-    println("Faster(noRGB)");
+    printM("Faster(noRGB)");
   } else if ( key == '%') {
     preset = "Fast(noRGB)";
-    println("Fast(noRGB)");
+    printM("Fast(noRGB)");
   } else if ( key == '^') {
     preset = "Medium(noRGB)";
-    println("Medium(noRGB)");
+    printM("Medium(noRGB)");
   } else if ( key == '&') {
     preset = "Slow(noRGB)";
-    println("Slow(noRGB)");
+    printM("Slow(noRGB)");
   } else if ( key == '*') {
     preset = "Slower(noRGB)";
-    println("Slower(noRGB)");
+    printM("Slower(noRGB)");
   } else if (key == '(' ) {
     preset = "VerySlow(noRGB)";
-    println("VerySlow(noRGB)");
+    printM("VerySlow(noRGB)");
   } else if (key == ')' ) {
     preset = "Placebo(noRGB)";
-    println("Placebo(noRGB)");
+    printM("Placebo(noRGB)");
   } else if (key == 'c' ) {
     preset = "Color";
-    println("Color");
+    printM("Color");
   }
 }
 
@@ -281,7 +307,7 @@ void exit() {
     population.population[i].draw(scanvas);
     scanvas.endDraw();
     String count = "00000".substring(str(i).length()) + str(i);
-    println(i + "/" + population.getPopLength());
+    printM(i + "/" + population.getPopLength());
     scanvas.save("projects/" + projectName + "/draw/" + count + ".jpg");
   }
 
