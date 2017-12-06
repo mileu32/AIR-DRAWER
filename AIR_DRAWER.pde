@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.3.0 beta build 18
-// Population version 1.3.0 beta build 13
+// AIR-DRAWER version 1.3.0 beta build 19
+// Population version 1.3.0 beta build 14
 // DNA version 1.2.0 build 11
 
 import org.hyperic.sigar.Sigar;
@@ -21,7 +21,7 @@ Population population;
 
 int gen;
 
-String preset = "UltraFast";
+String preset = "Medium";
 
 String projectName = year() + "00".substring(str(month()).length()) + str(month()) + "00".substring(str(day()).length()) + str(day()) + "00".substring(str(hour()).length()) + str(hour()) + "00".substring(str(minute()).length()) + str(minute()) + "_AIR";
 
@@ -35,7 +35,7 @@ void setup() {
   noStroke();
   smooth();
 
-  f = createFont("Courier", 50, true);
+  f = createFont("font/Maplestory Light.ttf", 50, true);
 
   surface.setTitle("AIR-DRAWER v1.3.0 beta");
 
@@ -51,7 +51,7 @@ void setup() {
 
   // Create a populationation with a target , mutation rate, and populationation max
   PImage target;
-  target = loadImage("Illya256crop.jpg");
+  target = loadImage("sagiri256.png");
   population = new Population(popmax, dnaSize, target);
 
   PImage mileuIcon;
@@ -66,29 +66,32 @@ void setup() {
   log = createWriter(".log.txt");
   log.println("Log created date : "+year()+"/"+month()+"/"+day()+" "+hour()+":"+minute()+":"+second()+"."+millis());
   log.println(projectName);
-  
-  printM("AIR-DRAWER version 1.3.0 beta build 18");
+
+  printM("AIR-DRAWER version 1.3.0 beta build 19");
 }
 
 void draw() {
-  if (millis() > 10000 && millis() < 100000) displaySystemInfo(256 + 64, 32, 256, 256);
+  if (millis() > 60000 && millis() < 100000) displaySystemInfo(256 + 64, 32, 256, 256);
 
   if (ifContinue) {
 
+    printM("preset : " + preset);
+
     if (addPopCount > 0) {
 
-      if (addPopCount > 300) preset = "UltraFast";
+      if (addPopCount > 350) preset = "UltraFast";
       else if (addPopCount > 100) preset = "Medium";
       else if (addPopCount > 1) preset = "Color";
-      else preset = "UltraFast";
+      else preset = "Medium";
 
       population.mutate(population.getPopLength() - 50);
       addPopCount -= 1;
     } else {
+
       population.mutate();
-      if (preset.equals("UltraFast") & population.getSuccess() < 5) {
+      if (preset.equals("Medium") & population.getSuccess() < 5 & population.popLength < 3000) {
         population.addPop(50);
-        addPopCount = 600;
+        addPopCount = 400;
       }
     }
 
@@ -119,15 +122,15 @@ void displayDiff(int x1, int y1, int x2, int y2) {
   image(diffImage[2], x1, y1 + 128, 128, 128);
 
   textAlign(LEFT, CENTER);
-  textFont(f, 20);
+  textFont(f, 19);
   fill(192);
   rect(x1 + 128, y1 + 128, 128, 128);
   fill(255, 0, 0);
-  text("R : " + population.getFitrgb()[0], x1 + 128 + 10, y1 + 128 + 32);
+  text("R : " + String.format("%.2E", population.getFitrgb()[0] / 1.0), x1 + 128 + 6, y1 + 128 + 32);
   fill(0, 255, 0);
-  text("G : " + population.getFitrgb()[1], x1 + 128 + 10, y1 + 128 + 64);
+  text("G : " + String.format("%.2E", population.getFitrgb()[1] / 1.0), x1 + 128 + 6, y1 + 128 + 64);
   fill(0, 0, 255);
-  text("B : " + population.getFitrgb()[2], x1 + 128 + 10, y1 + 128 + 96);
+  text("B : " + String.format("%.2E", population.getFitrgb()[2] / 1.0), x1 + 128 + 6, y1 + 128 + 96);
 }
 
 void displaySystemInfo(int x1, int y1, int x2, int y2) {
@@ -176,10 +179,10 @@ void displayPrintM(int x1, int y1, int x2, int y2) {
   fill(0);
   rect(x1, y1, x2, y2);
   fill(255);
-  while(print.size() > 18)
+  while (print.size() > 18)
     print.remove(0);
-    
-  for(int i = 0; i < print.size(); i++){
+
+  for (int i = 0; i < print.size(); i++) {
     text(print.get(print.size() - i - 1), x1 + 10, y1 + 480 - 20 - 25 * i);
   }
 }
@@ -200,12 +203,12 @@ void displayInfo(int x1, int y1, int x2, int y2) {
 
   //display generation count
   textAlign(LEFT, CENTER);
-  textFont(f, 20); 
+  textFont(f, 19); 
 
   fill(0);
   rect(x1, y1, x2, y2);
   fill(0, 255, 255);
-  
+
   String hour = "00";
   String minute = "00";
   String second = "00";
@@ -214,7 +217,7 @@ void displayInfo(int x1, int y1, int x2, int y2) {
   minute = "00".substring(str((millis()/60000)%60).length()) + str((millis()/60000)%60);
   second = "00".substring(str((millis()/1000)%60).length()) + str((millis()/1000)%60);
 
-  text("세대 : " + gen + "   시간 : " + hour + ":" + minute + ":" + second + "   정밀도 : " + population.getFitness() / 3, x1 + 5, y1 + 13);
+  text("세대 : " + gen + "   시간 : " + hour + ":" + minute + ":" + second + "   정밀도 : " + String.format("%.3E",  population.getFitness() / 3.0), x1 + 5, y1 + 13);
 }
 
 void keyPressed() {
@@ -290,6 +293,8 @@ void keyPressed() {
 void exit() {
 
   saveTable(table, "projects/" + projectName + "/data.csv");
+
+  population.removePop();
 
   population.savefile();
 
