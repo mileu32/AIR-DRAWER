@@ -1,6 +1,6 @@
 // AIR-DRAWER version 1.3.0 beta build 19
-// Population version 1.3.0 beta build 14
-// DNA version 1.2.0 build 11
+// Population version 1.3.0 beta build 15
+// DNA version 1.3.0 build 12
 
 // A class to describe a population of virtual organisms
 // In this case, each organism is just an instance of a DNA object
@@ -28,15 +28,15 @@ class Population {
 
   Population(int popLength, int dnaSize, PImage target) {
 
-    if (popLength > 2000) {
+    if (popLength > 3000) {
       printM("error : popLength is up to 3000");
-      popLength = 2000;
+      popLength = 3000;
     }
 
     this.popLength = popLength;
 
-    population = new DNA[3000];
-    populationBack = new DNA[3000];
+    population = new DNA[3005];
+    populationBack = new DNA[3005];
 
     this.dnaSize = dnaSize;
 
@@ -142,8 +142,8 @@ class Population {
 
   int addPop(int n) {
 
-    if (popLength + n > 2000) {
-      printM("error : popLength is up to 2000");
+    if (popLength + n > 3000) {
+      printM("error : popLength is up to 3000");
       return -1;
     }
 
