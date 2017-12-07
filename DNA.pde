@@ -1,16 +1,18 @@
 // AIR-DRAWER version 1.2.0 build 15
 // Population version 1.2.0 build 11
-// DNA version 1.2.0 build 11
+// DNA version 1.3.0 build 12
 
 class DNA {
 
   // The genetic sequence
   float[] genes;//(x1,y1), (x2,y2), r, g, b, a;
   int dnaSize;
+  int targetResolution;
 
   // Constructor (makes a random DNA)
   DNA(int num) {
     this.dnaSize = num;
+    targetResolution = 128;
     float len = 1;
     genes = new float[dnaSize];
 
@@ -138,6 +140,19 @@ class DNA {
   void mutate() {
     mutate(20, 15);
   }
+  
+  void extendResolution2x(){
+    dnaSize *=2;
+    targetResolution *= 2;
+   
+    float[] genesCache = new float[dnaSize];
+    for(int i = 0; i < dnaSize; i++){
+      genesCache[i] = genes[i/2];
+      genesCache[i+1] = genes[i/2];
+    }
+    
+    
+  }
 
   void draw(PGraphics layer, float ratio) {
     layer.stroke(genes[4], genes[5], genes[6], genes[7]);
@@ -147,7 +162,7 @@ class DNA {
 
   void draw(PGraphics layer) {
     float ratio;
-    ratio = layer.width / 128.0;
+    ratio = layer.width / float(targetResolution);
     draw(layer, ratio);
   }
 }
