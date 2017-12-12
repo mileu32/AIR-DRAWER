@@ -1,20 +1,20 @@
 --------
-# AIR-DRAWER
+# AIR-DRAWER v1.3.0
 
 <img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/frame.jpg">
 
 Draw image with GA
 
-- Based on : **Processing 3.3.2** https://processing.org/download/
+- Based on : **Processing 3.3.6** https://processing.org/download/
 - Original Project from suakii / cs2016 : evolving_imager999 https://github.com/suakii/cs2016/tree/master/7_Evolution_Code/evolving_imager999
 
 --------
 # examples
 
-- winxp (building) https://youtu.be/1Hlc6eYiScI
-- winxp (painting) https://youtu.be/XEFYhfZpA5k
+- sagiri (building) https://youtu.be/2Wg1B6BDxoA
+- sagiri (painting) https://youtu.be/kTBQNQGV2c4
 
-<img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/xp.jpg" width=256 height=256> -> <img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/result(16x)_xp.png" width=256 height=256>
+<img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/sagiri256.png" width=256 height=256> -> <img src="https://github.com/mileu32/AIR-DRAWER/blob/master/examples/result(16x)_sagiri256.png" width=256 height=256>
 
 - Illya (building) https://youtu.be/uqH9RCmoTSM
 - Illya (painting) https://youtu.be/N2iwa-AdrX8

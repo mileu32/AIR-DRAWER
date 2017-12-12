@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.2.0 build 15
-// Population version 1.2.0 build 11
-// DNA version 1.2.0 build 11
+// AIR-DRAWER version 1.3.0 build 19
+// Population version 1.3.0 build 15
+// DNA version 1.3.0 build 12
 
 // A class to describe a population of virtual organisms
 // In this case, each organism is just an instance of a DNA object
@@ -11,6 +11,7 @@ class Population {
   DNA[] populationBack;      // Backup population
 
   int dnaSize;
+
   private int popLength;
 
   private color backgroundColor;
@@ -27,15 +28,15 @@ class Population {
 
   Population(int popLength, int dnaSize, PImage target) {
 
-    if (popLength > 10000) {
-      println("error : popLength is up to 10000");
-      popLength = 10000;
+    if (popLength > 3000) {
+      printM("error : popLength is up to 3000");
+      popLength = 3000;
     }
 
     this.popLength = popLength;
 
-    population = new DNA[10000];
-    populationBack = new DNA[10000];
+    population = new DNA[3005];
+    populationBack = new DNA[3005];
 
     this.dnaSize = dnaSize;
 
@@ -46,8 +47,9 @@ class Population {
 
     this.target = target;
 
-    backgroundColor = selectBackgroundColor(target);
+    //backgroundColor = selectBackgroundColor(target);
     //backgroundColor = color(249, 239, 227);
+    backgroundColor = color(255);
 
     canvas = createGraphics(target.width, target.height);
     canvas.beginDraw();
@@ -55,11 +57,8 @@ class Population {
     canvas.endDraw();
     c_canvas1 = createGraphics(target.width, target.height);
 
-    fitrgb = calFitness();
-    lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
-    lastFitrgb = fitrgb;
-
-    fitness = lastFitness;
+    fitness =999999999;
+    lastFitness = 999999999;
   }
 
   void display(int start, int target) {
@@ -98,6 +97,7 @@ class Population {
     success = 0;
 
     for (int i = start; i < popLength; i++) {
+      //printM("DNA : " + i );
 
       population[i].mutate(preset);
       display(start, i);
@@ -105,6 +105,11 @@ class Population {
       fitrgb = calFitness();
       fitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
 
+      /*
+      printM("fit : " + fitness);
+      printM("lastfit : " + lastFitness);
+      */
+      
       //if before draw is better, rollback
       if (fitness < lastFitness) {
         copyFromOrigToBack();
@@ -128,37 +133,7 @@ class Population {
   }
 
   int mutate() {
-
-    success = 0;
-
-    for (int i = 0; i < popLength; i++) {
-
-      population[i].mutate(preset);
-      display(i);
-
-      fitrgb = calFitness();
-      fitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
-
-      //if before draw is better, rollback
-      if (fitness < lastFitness) {
-        copyFromOrigToBack();
-        lastFitness = fitness;
-        lastFitrgb = fitrgb;
-
-        success++;
-      } else {
-        copyFromBackToOrig();
-        fitness = lastFitness;
-        fitrgb = lastFitrgb;
-      }
-
-      c_canvas1.beginDraw();
-      population[i].draw(c_canvas1);
-      c_canvas1.endDraw();
-    }
-
-    //No errors have occurred
-    return 0;
+    return mutate(0);
   }
 
   int addPop() {
@@ -167,8 +142,8 @@ class Population {
 
   int addPop(int n) {
 
-    if (popLength + n > 10000) {
-      println("error : popLength is up to 10000");
+    if (popLength + n > 3000) {
+      printM("error : popLength is up to 3000");
       return -1;
     }
 
@@ -178,21 +153,47 @@ class Population {
     }
 
     popLength = popLength + n;
-    println("popLength : " + popLength);
+    printM("popLength : " + popLength);
 
     display();
 
-    fitrgb = calFitness();
-    lastFitness = fitrgb[0] + fitrgb[1] + fitrgb[2];
-    lastFitrgb = fitrgb;
-    fitness = lastFitness;
+    fitness =999999999;
+    lastFitness = 999999999;
 
     //No errors have occurred
     return 0;
   }
-  
-  int removePop(){
-    
+
+  int removePop() {
+    display();
+    int[] fitCache = calFitness();
+    int fit = fitCache[0] + fitCache[1] + fitCache[2];
+    printM("이전 오차 : " + fit);
+    int count = 0;
+    for (int i = 0; i < popLength; i++) {
+      canvas.beginDraw();
+      canvas.background(backgroundColor);
+      for (int j = 0; j< popLength; j++) {
+        if (i!=j) population[i].draw(canvas);
+      }
+      canvas.endDraw();
+      int[]fitc = calFitness();
+      int f = fitc[0] + fitc[1] + fitc[2];
+
+      if (f < fit) {
+        count++;
+        fit = f;
+        //remove i
+        for (int k = i+1; k < popLength; k++)
+          for (int l = 0; l < dnaSize; l++)
+            population[k-1].genes[l] = population[k].genes[l];
+        i--;
+      }
+    }
+
+    printM(count + "개의 유전자가 삭제되었습니다.");
+    printM("나중 오차 : " + fit);
+
     //No errors have occurred
     return 0;
   }
@@ -230,10 +231,10 @@ class Population {
   }
 
   void savefile() {
-    println("saving canvas..");
+    printM("saving canvas..");
     canvas.save("projects/" + projectName + "/result.png");
 
-    println("saving dna..");
+    printM("saving dna..");
     PrintWriter output = createWriter("projects/" + projectName + "/dna.air");
 
     output.println("MILEUAIR v1.0.0");     //file version
@@ -273,6 +274,56 @@ class Population {
     return fit;
   }
 
+
+  PImage[] diffImage() {
+
+    PGraphics[] diffImage = new PGraphics[3]; // 0 : Red, 1 : Green, 2 : Blue
+
+    for (int i = 0; i < diffImage.length; i++) {
+      diffImage[i] = createGraphics(target.width, target.height);
+      diffImage[i].beginDraw();
+      diffImage[i].background(backgroundColor);
+      diffImage[i].endDraw();
+    }
+
+    float rerr = 1, gerr = 1, berr = 1;
+
+    for (int x = 0; x < target.width; x++) {
+      for (int y = 0; y < target.height; y++) {
+        int loc = x + y*target.width;
+        //int comploc = x + (y+(target.height))*target.width;
+        color sourcepix = target.pixels[loc];
+        color comparepix = canvas.pixels[loc];
+
+        //find the error in color (0 to 255, 0 is no error)
+        rerr = max(rerr, abs(red(sourcepix)-red(comparepix)));
+        gerr = max(gerr, abs(green(sourcepix)-green(comparepix)));
+        berr = max(berr, abs(blue(sourcepix)-blue(comparepix)));
+      }
+    }
+
+    for (int i = 0; i < diffImage.length; i++)
+      diffImage[i].loadPixels();
+
+    for (int x = 0; x < target.width; x++) {
+      for (int y = 0; y < target.height; y++) {
+        int loc = x + y*target.width;
+        //int comploc = x + (y+(target.height))*target.width;
+        color sourcepix = target.pixels[loc];
+        color comparepix = canvas.pixels[loc];
+
+        diffImage[0].pixels[loc] = color(abs(red(sourcepix)-red(comparepix)) * 255 / rerr, 0, 0);
+        diffImage[1].pixels[loc] = color(0, abs(green(sourcepix)-green(comparepix)) * 255 / gerr, 0);
+        diffImage[2].pixels[loc] = color(0, 0, abs(blue(sourcepix)-blue(comparepix)) * 255 / berr);
+      }
+    }
+
+    for (int i = 0; i < diffImage.length; i++)
+      diffImage[i].updatePixels();
+
+    return diffImage;
+  }
+
   color selectBackgroundColor(PImage image) {
     int rsum = 0, gsum = 0, bsum = 0;
     int totalpixel = image.width * image.height;
@@ -298,7 +349,7 @@ class Population {
     bsum = bsum / totalpixel;
 
     averageColor = color(rsum, gsum, bsum);
-    println(rsum + " : " + gsum + " : " + bsum);
+    printM(rsum + " : " + gsum + " : " + bsum);
 
     return averageColor;
   }
