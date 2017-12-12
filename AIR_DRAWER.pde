@@ -1,6 +1,6 @@
-// AIR-DRAWER version 1.3.0 beta build 19
-// Population version 1.3.0 beta build 14
-// DNA version 1.2.0 build 11
+// AIR-DRAWER version 1.3.0 build 19
+// Population version 1.3.0 build 15
+// DNA version 1.3.0 build 12
 
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.Mem;
@@ -37,7 +37,7 @@ void setup() {
 
   f = createFont("font/Maplestory Light.ttf", 50, true);
 
-  surface.setTitle("AIR-DRAWER v1.3.0 beta");
+  surface.setTitle("AIR-DRAWER v1.3.0");
 
   table.addColumn("Gen");
   table.addColumn("Time");
@@ -67,7 +67,7 @@ void setup() {
   log.println("Log created date : "+year()+"/"+month()+"/"+day()+" "+hour()+":"+minute()+":"+second()+"."+millis());
   log.println(projectName);
 
-  printM("AIR-DRAWER version 1.3.0 beta build 19");
+  printM("AIR-DRAWER version 1.3.0 build 19");
 }
 
 void draw() {
@@ -145,9 +145,9 @@ void displaySystemInfo(int x1, int y1, int x2, int y2) {
   text("AIR-DRAWER", x1 + x2 / 2, y1 + 30);
 
   textFont(f, 20);
-  fill(255, 0, 0);
+  fill(0);
 
-  text("v1.3.0b", x1 + x2 / 2, y1 + 60);
+  text("v1.3.0", x1 + x2 / 2, y1 + 60);
 
   String cpu = "";
 
@@ -294,7 +294,7 @@ void exit() {
 
   saveTable(table, "projects/" + projectName + "/data.csv");
 
-  population.removePop();
+  //population.removePop();
 
   population.savefile();
 

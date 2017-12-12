@@ -1,5 +1,5 @@
-// AIR-DRAWER version 1.3.0 beta build 19
-// Population version 1.3.0 beta build 15
+// AIR-DRAWER version 1.3.0 build 19
+// Population version 1.3.0 build 15
 // DNA version 1.3.0 build 12
 
 // A class to describe a population of virtual organisms
