@@ -1,4 +1,4 @@
-// AIR-DRAWER version 1.3.0 build 19
+// AIR-DRAWER version 1.4.0 build 20
 // Population version 1.3.0 build 15
 // DNA version 1.3.0 build 12
 
@@ -30,14 +30,14 @@ ArrayList<String> print = new ArrayList<String>();
 void setup() {
   size(1080, 608);
 
-  //pixelDensity(displayDensity());
+  pixelDensity(displayDensity());
 
   noStroke();
   smooth();
 
   f = createFont("font/Maplestory Light.ttf", 50, true);
 
-  surface.setTitle("AIR-DRAWER v1.3.0");
+  surface.setTitle("AIR-DRAWER v1.4.0 beta");
 
   table.addColumn("Gen");
   table.addColumn("Time");
